@@ -86,7 +86,7 @@ def main():
     # User("M W", "2", 3).register()
 
     # Place bid in bidding system
-    #!bidding_system.place_bid(user, restaurant_name, bid_amount)
+    bidding_system.place_bid(user, restaurant_name, bid_amount)
 
     # View user's bidding history
     user.view_bidding_history()
