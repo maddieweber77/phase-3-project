@@ -1,7 +1,37 @@
 from geopy.geocoders import Nominatim
+import requests
+
+def get_fancy_restaurants(lat, lng):
+    url = "https://maps-data.p.rapidapi.com/searchmaps.php"
+
+    querystring = {
+        "query": "fancy restaurants",
+        "limit": "20",
+        "country": "us",
+        "lang": "en",
+        "lat": str(lat),
+        "lng": str(lng),
+        "offset": "0",
+        "zoom": "13"
+    }
+
+    headers = {
+        "X-RapidAPI-Key": "4578ad90c0msh7185e76eb4a1d1ap1676a0jsn80fa8c573e3d",
+        "X-RapidAPI-Host": "maps-data.p.rapidapi.com"
+    }
+
+    response = requests.get(url, headers=headers, params=querystring)
+
+    if response.ok:
+        data = response.json()
+        places = data.get('data', {}).get('places', [])
+        return places
+    else:
+        print(f"Error: {response.status_code} - {response.text}")
+        return []
 
 def get_neighborhood(latitude, longitude):
-    # Neighborhood latitude and longitude ranges
+    #! Neighborhood latitude and longitude ranges
     neighborhood_ranges = {
         "Upper West Side": {"lat_range": (40.772, 40.808), "lon_range": (-74.018, -73.972)},
         "Upper East Side": {"lat_range": (40.765, 40.782), "lon_range": (-73.958, -73.941)},
@@ -37,6 +67,22 @@ def main():
 
         neighborhood = get_neighborhood(latitude, longitude)
         print(f"You are in the neighborhood: {neighborhood}")
+
+        # Get fancy restaurants
+        response = get_fancy_restaurants(latitude, longitude)
+
+        # Check if the API request was successful
+        if response.get('status') == 'OK':
+            restaurants = response.get('data', {}).get('places', [])
+            
+            if restaurants:
+                print("\nFancy Restaurants:")
+                for restaurant in restaurants:
+                    print(restaurant.get('name'))
+            else:
+                print("No fancy restaurants found.")
+        else:
+            print(f"Error: {response.get('message', 'Unknown error')}")
     else:
         print("Invalid address. Please try again.")
 

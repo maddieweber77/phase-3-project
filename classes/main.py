@@ -1,6 +1,8 @@
+from geopy.geocoders import Nominatim
 from user import User
 from bidding_system import BiddingSystem
 from restaurant import Restaurant
+from current_location import get_neighborhood, get_fancy_restaurants
 
 # Make sure all files are imported
 
@@ -22,55 +24,69 @@ def is_valid_bid(bid_amount, minimum_bid):
 
 
 def main():
-    # Initialize restaurants
-    restaurants = [
-        Restaurant(name="Riverside Lounge", max_party_size=5, current_bid=20, neighborhood="Upper West Side"),
-        Restaurant(name="Parkside Grill", max_party_size=8, current_bid=15, neighborhood="Upper West Side"),
-        Restaurant(name="Elegance on the East", max_party_size=8, current_bid=22, neighborhood="Upper East Side"),
-        Restaurant(name="Cafe Serenity", max_party_size=10, current_bid=25, neighborhood="Upper East Side"),
-        Restaurant(name="City Lights Bistro", max_party_size=8, current_bid=22, neighborhood="Midtown"),
-        Restaurant(name="Metropolis Eats", max_party_size=10, current_bid=25, neighborhood="Midtown"),
-        Restaurant(name="Highline Haute Cuisine", max_party_size=10, current_bid=18, neighborhood="Chelsea"),
-        Restaurant(name="Artisan Alley", max_party_size=12, current_bid=30, neighborhood="Chelsea"),
-        Restaurant(name="Greenwich Gem", max_party_size=6, current_bid=18, neighborhood="Greenwich Village"),
-        Restaurant(name="Village Vittles", max_party_size=8, current_bid=25, neighborhood="Greenwich Village"),
-        Restaurant(name="Soho Social", max_party_size=6, current_bid=18, neighborhood="SoHo"),
-        Restaurant(name="Arty Appetites", max_party_size=8, current_bid=25, neighborhood="SoHo"),
-        Restaurant(name="Tribeca Treats", max_party_size=10, current_bid=22, neighborhood="Tribeca"),
-        Restaurant(name="Downtown Delights", max_party_size=12, current_bid=30, neighborhood="Tribeca"),
-        Restaurant(name="Financial Fusion", max_party_size=6, current_bid=18, neighborhood="Financial District"),
-        Restaurant(name="Wall Street Bites", max_party_size=8, current_bid=25, neighborhood="Financial District"),
-        Restaurant(name="Harlem Harvest", max_party_size=10, current_bid=22, neighborhood="Harlem"),
-        Restaurant(name="Soulful Supper", max_party_size=12, current_bid=30, neighborhood="Harlem"),
-        Restaurant(name="Village Vittles", max_party_size=6, current_bid=18, neighborhood="East Village"),
-        Restaurant(name="Eclectic Eats", max_party_size=8, current_bid=25, neighborhood="East Village"),
-        # Add more restaurants with their respective neighborhoods
-    ]
+    # Initialize user
+    user = User("M W", "2", 2).register()
 
+    # Get user location
+    loc = Nominatim(user_agent="GetLoc")
+    getLoc = loc.geocode(user.location)
+
+    latitude = 0
+    longitude= 0
+
+    if getLoc:
+        user_location = get_neighborhood(getLoc.latitude, getLoc.longitude)
+        print(f"You are in the neighborhood: {user_location}")
+        latitude = getLoc.latitude
+        longitude = getLoc.longitude
+        print(f"latitude: {getLoc.latitude}" )
+        print(f"longitude: {getLoc.longitude}" )
+
+        response = get_fancy_restaurants(latitude, longitude)
+
+        # Check if the API request was successful
+        if response.get('status') == 'OK':
+            restaurants = response.get('data', {}).get('places', [])
+            
+            if restaurants:
+                print("\nFancy Restaurants:")
+                for restaurant in restaurants:
+                    print(restaurant.get('name'))
+            else:
+                print("No fancy restaurants found.")
+        else:
+            print(f"Error: {response.get('message', 'Unknown error')}")
+    
+    else:
+        print('Invalid address, try again')
+        return  # You might want to handle this case appropriately
+
+    # Get fancy restaurants based on user's location
+    fancy_restaurants = get_fancy_restaurants(latitude, longitude)
+
+    # Initialize restaurants based on the obtained fancy restaurants
+    restaurants = [
+        Restaurant(
+            name=restaurant.get('name'),
+            max_party_size=10,
+            current_bid=15,     
+            neighborhood=user_location
+        )
+        for restaurant in fancy_restaurants
+    ]
 
     # Bidding system now has access to the restaurants object
     bidding_system = BiddingSystem(restaurants)
 
-    # Create a user instance and register
-    user = User("M W", "2", 2).register()
-    
-    def is_valid_restaurant(restaurant):
-        valid_restaurant_names = [r.name for r in restaurants]
-        return restaurant in valid_restaurant_names
-
-
-    
-
     # Display available restaurants based on a user's location
-    bidding_system.display_available_restaurants(party_size=user.party_size, user_neighborhood=user.location)
-
+    bidding_system.display_available_restaurants(party_size=user.party_size, user_neighborhood=user_location)
 
     # Get user bid info
     restaurant_name = get_user_input(
         "Which restaurant do you want to bid on? ",
         data_type=str,
         validation_function=is_valid_restaurant
-)
+    )
     
     # How to make sure that this amount is greater than the previous bid, if a previous bid exists?
     #! what does next do?
@@ -83,8 +99,6 @@ def main():
         else:
             print("Your bid is too low. Please enter a higher bid that is at least $10 more than the last bid")
     
-    # User("M W", "2", 3).register()
-
     # Place bid in bidding system
     bidding_system.place_bid(user, restaurant_name, bid_amount)
 

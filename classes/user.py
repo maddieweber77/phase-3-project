@@ -90,7 +90,7 @@ class User:
         self.validate_name_input(name_input)
         self.name = name_input
 
-        address = input("What is your current location address?")
+        address = input("What is your current location address? ")
 
         loc = Nominatim(user_agent="GetLoc")
         getLoc = loc.geocode(address)
@@ -98,31 +98,14 @@ class User:
         if getLoc: 
             self.location =get_neighborhood(getLoc.latitude, getLoc.longitude)
             print(f"You are in the neighborhood: {self.location}")
+            print(f"latitude: {getLoc.latitude}" )
+            print(f"longitude: {getLoc.longitude}" )
+            
+
         else:
             print('Invalid address, try again')
             return self.register()
 
-        # # Print numbered list of valid neighborhoods
-        # print("Select your neighborhood:")
-        # for i, neighborhood in enumerate(valid_neighborhoods, start=1):
-        #     print(f"{i}. {neighborhood}")
-
-        # # Get user input for neighborhood selection
-        # while True:
-        #     try:
-        #         selected_index = int(
-        #             input("Enter the number corresponding to your neighborhood: ")
-        #         )
-        #         if 1 <= selected_index <= len(valid_neighborhoods):
-        #             #! location attribute needs to be set to neighborhood instead
-        #             self.location = valid_neighborhoods[selected_index - 1]
-        #             print('printing location:')
-        #             print(self.location)
-        #             break
-        #         else:
-        #             print("Invalid selection. Please enter a valid number.")
-        #     except ValueError:
-        #         print("Invalid input. Please enter a number.")
         
         while True:
             try:
@@ -132,10 +115,6 @@ class User:
             except ValueError:
                 print("Invalid input. Please enter a valid party size (an integer between 1 and 10).")
 
-
-        # phone_number = input("What is your phone number? ")
-
-        # print(f"Thank you, {name_input}! Your registration is complete.")
 
         return self
 
