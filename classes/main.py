@@ -21,7 +21,6 @@ def is_valid_bid(bid_amount, minimum_bid):
     return bid_amount>= minimum_bid
 
 
-
 def main():
     # Initialize restaurants
     restaurants = [
@@ -48,43 +47,22 @@ def main():
         # Add more restaurants with their respective neighborhoods
     ]
 
+
     # Bidding system now has access to the restaurants object
     bidding_system = BiddingSystem(restaurants)
 
-    # Get user info
-    user = get_user_input("Enter your userID: ")
-
-    # Example usage with neighborhood validation
-    valid_neighborhoods = [
-        "Upper West Side",
-        "Upper East Side",
-        "Midtown",
-        "Chelsea",
-        "Greenwich Village",
-        "SoHo",
-        "Tribeca",
-        "Financial District",
-        "Harlem",
-        "East Village"
-    ]
-
-    def is_valid_neighborhood(location):
-        return location in valid_neighborhoods
+    # Create a user instance and register
+    user = User("M W", "2", 2).register()
     
     def is_valid_restaurant(restaurant):
         valid_restaurant_names = [r.name for r in restaurants]
         return restaurant in valid_restaurant_names
 
-    user_location = get_user_input(
-        "Which Manhattan neighborhood are you in? ",
-        data_type=str,
-        validation_function=is_valid_neighborhood
-    )
 
-    user = User(user=user, location=user_location)
+    
 
     # Display available restaurants based on a user's location
-    bidding_system.display_available_restaurants(party_size=1, user_neighborhood=user.location)
+    bidding_system.display_available_restaurants(party_size=user.party_size, user_neighborhood=user.location)
 
 
     # Get user bid info
@@ -99,14 +77,16 @@ def main():
     current_bid = next((restaurant.current_bid for restaurant in restaurants if restaurant.name == restaurant_name), None)
     
     while True:
-        bid_amount = get_user_input("Enter your bid amount (must be $10 greater than last bid): $", float)
+        bid_amount = get_user_input(f"Enter your bid amount (must be $10 greater than last bid of ${current_bid}): $", float)
         if bid_amount >= current_bid +10:
             break
         else:
             print("Your bid is too low. Please enter a higher bid that is at least $10 more than the last bid")
+    
+    # User("M W", "2", 3).register()
 
     # Place bid in bidding system
-    bidding_system.place_bid(user, restaurant_name, bid_amount)
+    #!bidding_system.place_bid(user, restaurant_name, bid_amount)
 
     # View user's bidding history
     user.view_bidding_history()
@@ -121,3 +101,12 @@ if __name__ == "__main__":
 #! make some random function that is randomly either true / false (to recreate a second bidder) and depending what it returns, the original user will either be outbid (or will be allowed to have the reservation)
     
 #! Needs to ask the user for party size
+    
+
+#! Make tests for first and last name
+    
+#! downplay the login info
+#! rather, need to emphasize bidding process:
+    # pull restaurants API
+
+#! if there aren't any restaurant reservations with the specific inputted # of people, we need to tell them that and ask them if they would like to look elsewhere

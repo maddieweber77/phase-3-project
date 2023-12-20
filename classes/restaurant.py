@@ -1,4 +1,5 @@
 class Restaurant:
+    
     def __init__(self, name, max_party_size, current_bid, neighborhood):
         self.name = name
         self.max_party_size = max_party_size
