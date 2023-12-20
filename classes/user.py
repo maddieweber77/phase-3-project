@@ -1,7 +1,11 @@
+from geopy.geocoders import Nominatim
+from current_location import get_neighborhood
+
 class User:
-    def __init__(self, name, location, party_size):
+    def __init__(self, name, location, party_size, neighborhood=None):
         self.name = name
         self.location = location
+        self.neighborhood = neighborhood
         self.bidding_history = []
 
     @property
@@ -86,26 +90,39 @@ class User:
         self.validate_name_input(name_input)
         self.name = name_input
 
-        # Print numbered list of valid neighborhoods
-        print("Select your neighborhood:")
-        for i, neighborhood in enumerate(valid_neighborhoods, start=1):
-            print(f"{i}. {neighborhood}")
+        address = input("What is your current location address?")
 
-        # Get user input for neighborhood selection
-        while True:
-            try:
-                selected_index = int(
-                    input("Enter the number corresponding to your neighborhood: ")
-                )
-                if 1 <= selected_index <= len(valid_neighborhoods):
-                    self.location = valid_neighborhoods[selected_index - 1]
-                    print('printing location:')
-                    print(self.location)
-                    break
-                else:
-                    print("Invalid selection. Please enter a valid number.")
-            except ValueError:
-                print("Invalid input. Please enter a number.")
+        loc = Nominatim(user_agent="GetLoc")
+        getLoc = loc.geocode(address)
+
+        if getLoc: 
+            self.location =get_neighborhood(getLoc.latitude, getLoc.longitude)
+            print(f"You are in the neighborhood: {self.location}")
+        else:
+            print('Invalid address, try again')
+            return self.register()
+
+        # # Print numbered list of valid neighborhoods
+        # print("Select your neighborhood:")
+        # for i, neighborhood in enumerate(valid_neighborhoods, start=1):
+        #     print(f"{i}. {neighborhood}")
+
+        # # Get user input for neighborhood selection
+        # while True:
+        #     try:
+        #         selected_index = int(
+        #             input("Enter the number corresponding to your neighborhood: ")
+        #         )
+        #         if 1 <= selected_index <= len(valid_neighborhoods):
+        #             #! location attribute needs to be set to neighborhood instead
+        #             self.location = valid_neighborhoods[selected_index - 1]
+        #             print('printing location:')
+        #             print(self.location)
+        #             break
+        #         else:
+        #             print("Invalid selection. Please enter a valid number.")
+        #     except ValueError:
+        #         print("Invalid input. Please enter a number.")
         
         while True:
             try:
