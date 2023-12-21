@@ -10,6 +10,6 @@ class Restaurant:
 
     def display_info(self, user_neighborhood):
         if self.neighborhood.lower() == user_neighborhood.lower():
-            print(f"{self.name} - Max Party Size: {self.max_party_size} - Current Bid: ${self.current_bid} - Neighborhood: {self.neighborhood}")
+            print(f"{self.name} - Max Party Size: {self.max_party_size} - Current Bid: ${self.current_bid}")
 
 #! Implement methods for managing restaurant information and releasing canceled reservations.

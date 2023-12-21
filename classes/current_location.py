@@ -1,10 +1,11 @@
 from geopy.geocoders import Nominatim
+import sqlite3
 import requests
 
 def get_fancy_restaurants(lat, lng):
     url = "https://maps-data.p.rapidapi.com/searchmaps.php"
 
-    querystring = {"query":"fancy restaurants","limit":"20","country":"us","lang":"en","lat":"40.7244714","lng":"-74.0057078","offset":"0","zoom":"13"}
+    querystring = {"query":"fancy restaurants","limit":"10","country":"us","lang":"en","lat":"40.7244714","lng":"-74.0057078","offset":"0","zoom":"13"}
 
     headers = {
         "X-RapidAPI-Key": "4578ad90c0msh7185e76eb4a1d1ap1676a0jsn80fa8c573e3d",
@@ -28,6 +29,18 @@ def get_fancy_restaurants(lat, lng):
     else:
         print(f"Error: {response.status_code} - {response.text}")
         return []
+
+def fetch_reservations_from_db():
+    conn = sqlite3.connect('reservations.db')
+    cursor = conn.cursor()
+
+    # Fetch all data from the reservations table
+    cursor.execute('SELECT * FROM reservations')
+    reservations = cursor.fetchall()
+
+    conn.close()
+
+    return reservations
 
 def get_neighborhood(latitude, longitude):
     #! Neighborhood latitude and longitude ranges
@@ -66,6 +79,9 @@ def main():
 
         # Get fancy restaurants
         response = get_fancy_restaurants(latitude, longitude)
+
+        # Fetch reservations from the database
+        reservations = fetch_reservations_from_db()
 
         # Check if the API request was successful
         if response.get('status') == 'OK':

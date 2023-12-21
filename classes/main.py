@@ -61,7 +61,7 @@ def main():
         Restaurant(
             name=restaurant.get('name'),
             max_party_size=random.randint(2,10),
-            current_bid= random.randint(10,100),
+            current_bid=random.randint(10,100),
             neighborhood=user_location
         )
         for restaurant in fancy_restaurants
