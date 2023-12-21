@@ -3,6 +3,7 @@ from user import User
 from bidding_system import BiddingSystem
 from restaurant import Restaurant
 from current_location import get_neighborhood, get_fancy_restaurants
+import random
 
 # Make sure all files are imported
 
@@ -59,8 +60,8 @@ def main():
     restaurants = [
         Restaurant(
             name=restaurant.get('name'),
-            max_party_size=10,
-            current_bid=15,
+            max_party_size=random.randint(2,10),
+            current_bid= random.randint(10,100),
             neighborhood=user_location
         )
         for restaurant in fancy_restaurants
