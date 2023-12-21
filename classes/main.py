@@ -35,41 +35,32 @@ def main():
     longitude= 0
 
     if getLoc:
-        user_location = get_neighborhood(getLoc.latitude, getLoc.longitude)
-        print(f"You are in the neighborhood: {user_location}")
         latitude = getLoc.latitude
         longitude = getLoc.longitude
-        print(f"latitude: {getLoc.latitude}" )
-        print(f"longitude: {getLoc.longitude}" )
+        user_location = get_neighborhood(latitude, longitude)
+        print(f"latitude: {latitude}" )
+        print(f"longitude: {longitude}" )
 
-        response = get_fancy_restaurants(latitude, longitude)
+        # Get fancy restaurants
+        fancy_restaurants = get_fancy_restaurants(latitude, longitude)
 
         # Check if the API request was successful
-        if response.get('status') == 'OK':
-            restaurants = response.get('data', {}).get('places', [])
-            
-            if restaurants:
-                print("\nFancy Restaurants:")
-                for restaurant in restaurants:
-                    print(restaurant.get('name'))
-            else:
-                print("No fancy restaurants found.")
+        if isinstance(fancy_restaurants, list) and fancy_restaurants:
+            print("\nFancy Restaurants:")
+            for restaurant in fancy_restaurants:
+                print(restaurant.get('name'))
         else:
-            print(f"Error: {response.get('message', 'Unknown error')}")
-    
+            print("No fancy restaurants found.")
     else:
         print('Invalid address, try again')
         return  # You might want to handle this case appropriately
-
-    # Get fancy restaurants based on user's location
-    fancy_restaurants = get_fancy_restaurants(latitude, longitude)
 
     # Initialize restaurants based on the obtained fancy restaurants
     restaurants = [
         Restaurant(
             name=restaurant.get('name'),
             max_party_size=10,
-            current_bid=15,     
+            current_bid=15,
             neighborhood=user_location
         )
         for restaurant in fancy_restaurants
@@ -85,7 +76,7 @@ def main():
     restaurant_name = get_user_input(
         "Which restaurant do you want to bid on? ",
         data_type=str,
-        validation_function=is_valid_restaurant
+        # validation_function=is_valid_restaurant
     )
     
     # How to make sure that this amount is greater than the previous bid, if a previous bid exists?

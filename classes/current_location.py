@@ -4,16 +4,7 @@ import requests
 def get_fancy_restaurants(lat, lng):
     url = "https://maps-data.p.rapidapi.com/searchmaps.php"
 
-    querystring = {
-        "query": "fancy restaurants",
-        "limit": "20",
-        "country": "us",
-        "lang": "en",
-        "lat": str(lat),
-        "lng": str(lng),
-        "offset": "0",
-        "zoom": "13"
-    }
+    querystring = {"query":"fancy restaurants","limit":"20","country":"us","lang":"en","lat":"40.7244714","lng":"-74.0057078","offset":"0","zoom":"13"}
 
     headers = {
         "X-RapidAPI-Key": "4578ad90c0msh7185e76eb4a1d1ap1676a0jsn80fa8c573e3d",
@@ -24,7 +15,15 @@ def get_fancy_restaurants(lat, lng):
 
     if response.ok:
         data = response.json()
-        places = data.get('data', {}).get('places', [])
+        places = data.get('data', [])
+
+        # print("Raw Data:")
+        # print(data)
+
+        print("\nRestaurant Names:")
+        for place in places:
+            print(place.get('name'))
+
         return places
     else:
         print(f"Error: {response.status_code} - {response.text}")
@@ -64,9 +63,6 @@ def main():
 
         print("Latitude =", latitude)
         print("Longitude =", longitude)
-
-        neighborhood = get_neighborhood(latitude, longitude)
-        print(f"You are in the neighborhood: {neighborhood}")
 
         # Get fancy restaurants
         response = get_fancy_restaurants(latitude, longitude)
