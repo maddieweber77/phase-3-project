@@ -8,8 +8,11 @@ class BiddingSystem:
             available_restaurants = [
                 restaurant
                 for restaurant in self.restaurants
-                if party_size <= restaurant.max_party_size
+                if (
+                party_size <= restaurant.max_party_size
+                and restaurant.neighborhood
                 and restaurant.neighborhood.lower() == user_neighborhood.lower()
+                )
             ]
 
             if not available_restaurants:
@@ -29,11 +32,6 @@ class BiddingSystem:
                 for restaurant in available_restaurants:
                     restaurant.display_info(user_neighborhood)
                 break  # Break out of the loop when there are available restaurants
-
-
-        # print(f"Available Restaurants in {user_neighborhood}: ")
-        # for restaurant in available_restaurants:
-        #     restaurant.display_info(user_neighborhood)
 
     def place_bid(self, user, restaurant_name, bid_amount):
         for restaurant in self.restaurants:

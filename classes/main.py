@@ -26,35 +26,21 @@ def is_valid_bid(bid_amount, minimum_bid):
 
 def main():
     # Initialize user
-    user = User("M W", "2", 2).register()
+    user, latitude, longitude = User("M W", "2", 2).register()
 
-    # Get user location
-    loc = Nominatim(user_agent="GetLoc")
-    getLoc = loc.geocode(user.location)
+   # use the user's location that we obtained during registation (in user)
+    user_location = get_neighborhood(latitude, longitude)
+    
+    # Get fancy restaurants
+    fancy_restaurants = get_fancy_restaurants(latitude, longitude)
 
-    latitude = 0
-    longitude= 0
-
-    if getLoc:
-        latitude = getLoc.latitude
-        longitude = getLoc.longitude
-        user_location = get_neighborhood(latitude, longitude)
-        print(f"latitude: {latitude}" )
-        print(f"longitude: {longitude}" )
-
-        # Get fancy restaurants
-        fancy_restaurants = get_fancy_restaurants(latitude, longitude)
-
-        # Check if the API request was successful
-        if isinstance(fancy_restaurants, list) and fancy_restaurants:
-            print("\nFancy Restaurants:")
-            for restaurant in fancy_restaurants:
-                print(restaurant.get('name'))
-        else:
-            print("No fancy restaurants found.")
+    # Check if the API request was successful
+    if isinstance(fancy_restaurants, list) and fancy_restaurants:
+        print("\nFancy Restaurants:")
+        for restaurant in fancy_restaurants:
+            print(restaurant.get('name'))
     else:
-        print('Invalid address, try again')
-        return  # You might want to handle this case appropriately
+        print("No fancy restaurants found.")
 
     # Initialize restaurants based on the obtained fancy restaurants
     restaurants = [
@@ -62,7 +48,7 @@ def main():
             name=restaurant.get('name'),
             max_party_size=random.randint(2,10),
             current_bid=random.randint(10,100),
-            neighborhood=user_location
+            neighborhood=user.neighborhood
         )
         for restaurant in fancy_restaurants
     ]

@@ -5,7 +5,7 @@ import requests
 def get_fancy_restaurants(lat, lng):
     url = "https://maps-data.p.rapidapi.com/searchmaps.php"
 
-    querystring = {"query":"fancy restaurants","limit":"10","country":"us","lang":"en","lat":"40.7244714","lng":"-74.0057078","offset":"0","zoom":"13"}
+    querystring = {f"query":"fancy restaurants","limit":"10","country":"us","lang":"en","lat":{lat},"lng":{lng},"offset":"0","zoom":"13"}
 
     headers = {
         "X-RapidAPI-Key": "4578ad90c0msh7185e76eb4a1d1ap1676a0jsn80fa8c573e3d",
@@ -65,17 +65,17 @@ def get_neighborhood(latitude, longitude):
 
     return "Unknown"
 
-def main():
-    loc = Nominatim(user_agent="GetLoc")
-    address = input("What is your address? ")
-    getLoc = loc.geocode(address)
+def main(latitude, longitude):
+    # loc = Nominatim(user_agent="GetLoc")
+    # address = input("What is your address? ")
+    # getLoc = loc.geocode(address)
 
-    if getLoc:
-        latitude = getLoc.latitude
-        longitude = getLoc.longitude
+    # if getLoc:
+    #     latitude = getLoc.latitude
+    #     longitude = getLoc.longitude
 
-        print("Latitude =", latitude)
-        print("Longitude =", longitude)
+    #     print("Latitude =", latitude)
+    #     print("Longitude =", longitude)
 
         # Get fancy restaurants
         response = get_fancy_restaurants(latitude, longitude)
@@ -95,8 +95,8 @@ def main():
                 print("No fancy restaurants found.")
         else:
             print(f"Error: {response.get('message', 'Unknown error')}")
-    else:
-        print("Invalid address. Please try again.")
+    # else:
+    #     print("Invalid address. Please try again.")
 
 if __name__ == "__main__":
     main()

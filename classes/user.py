@@ -96,12 +96,13 @@ class User:
         getLoc = loc.geocode(address)
 
         if getLoc: 
-            self.location =get_neighborhood(getLoc.latitude, getLoc.longitude)
-            print(f"You are in the neighborhood: {self.location}")
-            print(f"latitude: {getLoc.latitude}" )
-            print(f"longitude: {getLoc.longitude}" )
-            
-
+            latitude = getLoc.latitude
+            longitude = getLoc.longitude
+            neighborhood = get_neighborhood(latitude, longitude)
+            print("printing from user.py")
+            print(f"You are in the neighborhood: {neighborhood}")
+            print(f"latitude: {latitude}" )
+            print(f"longitude: {longitude}" )
         else:
             print('Invalid address, try again')
             return self.register()
@@ -116,7 +117,7 @@ class User:
                 print("Invalid input. Please enter a valid party size (an integer between 1 and 10).")
 
 
-        return self
+        return self, latitude, longitude
 
     def get_bid_amount(self):
         while True:
