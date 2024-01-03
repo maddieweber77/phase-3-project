@@ -16,22 +16,22 @@ class BiddingSystem:
                 )
             ]
 
-            # if not available_restaurants:
-            #     print(
-            #         f"No available restaurants available in your area for the specified party size. Please try again"
-            #     )
+            if not available_restaurants:
+                print(
+                    f"No available restaurants available in your area for the specified party size. Please try again"
+                )
                 
-            #     # Re-prompt user for neighborhood and party size
-            #     user = User("dummy", "dummy", 0)
-            #     user.register()
+                # Re-prompt user for neighborhood and party size
+                user = User("dummy", "dummy", 0)
+                user.register()
                 
-            #     # Update party size and neighborhood
-            #     party_size = user.party_size
-            # else:
-            #     print(f"Available Restaurants: ")
-            #     for restaurant in available_restaurants:
-            #         restaurant.display_info(user_neighborhood)
-            #     break  # Break out of the loop when there are available restaurants
+                # Update party size and neighborhood
+                party_size = user.party_size
+            else:
+                # print(f"Available Restaurants: ")
+                # for restaurant in available_restaurants:
+                #     restaurant.display_info(user_neighborhood)
+                break  # Break out of the loop when there are available restaurants
 
     def place_bid(self, user, restaurant_name, bid_amount):
         for restaurant in self.restaurants:
