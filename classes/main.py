@@ -39,11 +39,12 @@ def main():
     restaurants = [
         Restaurant(
             name=restaurant.get('name'),
-            max_party_size=random.randint(2,10),
-            current_bid=random.randint(10,100),
+            max_party_size=random.randint(2,10)
         )
         for restaurant in fancy_restaurants
     ]
+
+    
 
     # Bidding system now has access to the restaurants object
     bidding_system = BiddingSystem(restaurants)
