@@ -136,13 +136,22 @@ def show(event: ValueChangeEventArguments):
 #! ################   niceGUI code below  ################ 
 
 
+# Use a dictionary to store values
+data = {'user': None, 'latitude': None, 'longitude': None, 'party_size': None}
+completion_counter = 0  # Counter to track the completion of steps
 
-def submit_name(name_input_widget):
+def submit_name(name_input_widget, data):
     name_input = name_input_widget.value
     user = User(name_input, "558 Broome Street", 2)
     print(f"Name: {name_input}")
 
-def submit_address(address_input_widget):
+    # Store the user value in the data dictionary
+    data['user'] = user
+    global completion_counter
+    completion_counter += 1
+    check_completion()
+
+def submit_address(address_input_widget, data):
     address_input = address_input_widget.value
     loc = Nominatim(user_agent="GetLoc")
     getLoc = loc.geocode(address_input)
@@ -151,69 +160,68 @@ def submit_address(address_input_widget):
         latitude = getLoc.latitude
         longitude = getLoc.longitude
         print("printing from main.py")
-        print((f"latitude: {latitude}" ))
-        print((f"longitude: {longitude}" ))
+        print(f"latitude: {latitude}")
+        print(f"longitude: {longitude}")
+
+        # Store latitude and longitude in the data dictionary
+        data['latitude'] = latitude
+        data['longitude'] = longitude
+        # Increment the completion counter
+        global completion_counter
+        completion_counter += 1
+        check_completion()
 
         with ui.row():
-            ui.label(f"latitude: {latitude}" )
-            ui.label(f"longitude: {longitude}" )
+            ui.label(f"latitude: {latitude}")
+            ui.label(f"longitude: {longitude}")
     else:
         print('Invalid address, try again')
-        # return self.register()
 
-def submit_party_size(party_size_input_widget):
+def submit_party_size(party_size_input_widget, data):
     party_size_input = party_size_input_widget.value
 
     print(f"Party Size: {party_size_input}")
 
+    # Store party_size in the data dictionary
+    data['party_size'] = party_size_input
+    # Increment the completion counter
+    global completion_counter
+    completion_counter += 1
+    check_completion()
 
+def check_completion():
+    global completion_counter
+    # Check if all three steps are completed
+    if completion_counter == 3:
+        # Reset the completion counter for future runs
+        completion_counter = 0
+        n()
 
 def m():
-
     latitude = 0
     longitude = 0
-    
+
     with ui.row():
         name_input_widget = ui.input("First & Last Name")
-        ui.button('Next', on_click=lambda: submit_name(name_input_widget))
+        ui.button('Next', on_click=lambda: submit_name(name_input_widget, data))
 
     with ui.row():
         address_input_widget = ui.input("Current Address")
-        ui.button('Next', on_click=lambda: submit_address(address_input_widget))
-    
-    
+        ui.button('Next', on_click=lambda: submit_address(address_input_widget, data))
+
     with ui.row():
         party_size_input_widget = ui.input("# People in Party")
-        ui.button('Next', on_click=lambda: submit_party_size(party_size_input_widget))
-        
-            
+        ui.button('Next', on_click=lambda: submit_party_size(party_size_input_widget, data))
 
-        # party_size_input = ui.input("# People in Party").value
-
-
-        # #! need to also return latitude and logitude somehow
-        # return name_input, address_input, party_size_input
-
+def n():
+    # Access the stored values in data
+    print("User:", data['user'])
+    print("Latitude:", data['latitude'])
+    print("Longitude:", data['longitude'])
+    print("Party Size:", data['party_size'])
 
 if __name__ in {"__main__", "__mp_main__"}:
-    # main()
     m()
     ui.run(native=True)
-    
 
-
-
-#! If I type in the uncapitalized name of a neighborhood, it should still accept it
     
-#! make some random function that is randomly either true / false (to recreate a second bidder) and depending what it returns, the original user will either be outbid (or will be allowed to have the reservation)
-    
-#! Needs to ask the user for party size
-    
-
-#! Make tests for first and last name
-    
-#! downplay the login info
-#! rather, need to emphasize bidding process:
-    # pull restaurants API
-
-#! if there aren't any restaurant reservations with the specific inputted # of people, we need to tell them that and ask them if they would like to look elsewhere
