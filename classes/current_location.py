@@ -18,13 +18,13 @@ def get_fancy_restaurants(lat, lng):
         data = response.json()
         places = data.get('data', [])
 
-        # print("Raw Data:")
-        # print(data)
+        # # print("Raw Data:")
+        # # print(data)
 
-        print("\nRestaurant Names:")
-        print("printing from current_location")
-        for place in places:
-            print(place.get('name'))
+        # print("\nRestaurant Names:")
+        # print("printing from current_location")
+        # for place in places:
+        #     print(place.get('name'))
 
         return places
     else:

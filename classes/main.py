@@ -32,7 +32,8 @@ def main():
     fancy_restaurants = get_fancy_restaurants(latitude, longitude)
 
     #checking to make sure that fancy restaurants are being pulled through
-    print("Number of fancy restaurants:", len(fancy_restaurants))
+    #! this needs to be the # of fancy restaurants that can accomodate the given party size
+    print(len(fancy_restaurants), " Fancy Restaurants")
 
     # Initialize restaurants based on the obtained fancy restaurants
     restaurants = [
