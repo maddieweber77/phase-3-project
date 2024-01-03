@@ -13,12 +13,16 @@ class User:
 
     @party_size.setter
     def party_size(self, party_size):
-        PARTY_IS_NUM = isinstance(party_size, int)
-        PARTY_LIMIT_SIZE = (10 >= party_size >= 1)
-        if PARTY_IS_NUM and PARTY_LIMIT_SIZE:
-            self._party_size = party_size
-        else:
-            raise ValueError("Party size must be an integer between 1 and 10.")
+        try:
+            party_size = int(party_size)
+            PARTY_LIMIT_SIZE = (10 >= party_size >= 1)
+            if PARTY_LIMIT_SIZE:
+                self._party_size = party_size
+            else:
+                raise ValueError("Party size must be an integer between 1 and 10.")
+        except ValueError:
+            raise ValueError("Invalid party size. Please enter a valid integer.")
+
 
     @property
     def name(self):
@@ -70,39 +74,6 @@ class User:
 
         if any(char.isdigit() for char in name_input):
             raise ValueError("Invalid name. Numbers are not allowed in the name.")
-
-
-    def register(self):
-        name_input = input("What is your first and last name? ")
-        self.validate_name_input(name_input)
-        self.name = name_input
-
-        address = input("What is your current location address? ")
-
-        loc = Nominatim(user_agent="GetLoc")
-        getLoc = loc.geocode(address)
-
-        if getLoc: 
-            latitude = getLoc.latitude
-            longitude = getLoc.longitude
-            print("printing from user.py")
-            print(f"latitude: {latitude}" )
-            print(f"longitude: {longitude}" )
-        else:
-            print('Invalid address, try again')
-            return self.register()
-
-        
-        while True:
-            try:
-                party_size_input = int(input("How many people are in your party? "))
-                self.party_size = party_size_input
-                break
-            except ValueError:
-                print("Invalid input. Please enter a valid party size (an integer between 1 and 10).")
-
-
-        return self, latitude, longitude
 
     def get_bid_amount(self):
         while True:

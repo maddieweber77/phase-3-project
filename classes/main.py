@@ -4,8 +4,14 @@ from bidding_system import BiddingSystem
 from restaurant import Restaurant
 from current_location import get_fancy_restaurants
 import random
+from nicegui import ui
+from nicegui.events import ValueChangeEventArguments
 
 # Make sure all files are imported
+
+def show(event):
+    name = type(event.sender).__name__
+    ui.notify(f'{name}: {event.value}')
 
 def get_user_input(prompt, data_type=str, validation_function=None, **kwargs):
     while True:
@@ -21,33 +27,36 @@ def get_user_input(prompt, data_type=str, validation_function=None, **kwargs):
             print(str(e))
 
 def register():
-        name_input = input("What is your first and last name? ")
+        with ui.row():
+            name_input = ui.input("What is your first and last name? ").value
 
-        user = User(name_input,"558 Broome Street",2)
+            user = User(name_input,"558 Broome Street",2)
 
-        user.validate_name_input(name_input)
-        # User.self.name = name_input
+            user.validate_name_input(name_input)
+            # User.self.name = name_input
 
         while True:
-            address = input("What is your current location address? ")
+            with ui.row():
+                address = ui.input("What is your current location address? ").value
 
-            loc = Nominatim(user_agent="GetLoc")
-            getLoc = loc.geocode(address)
+                loc = Nominatim(user_agent="GetLoc")
+                getLoc = loc.geocode(address)
 
-            if getLoc: 
-                latitude = getLoc.latitude
-                longitude = getLoc.longitude
-                print("printing from user.py")
-                print(f"latitude: {latitude}" )
-                print(f"longitude: {longitude}" )
-                break
-            else:
-                print('Invalid address, try again')
-                # return self.register()
+                if getLoc: 
+                    latitude = getLoc.latitude
+                    longitude = getLoc.longitude
+                    print("printing from user.py")
+                    ui.label(f"latitude: {latitude}" )
+                    ui.label(f"longitude: {longitude}" )
+                    break
+                else:
+                    print('Invalid address, try again')
+                    # return self.register()
 
             
             try:
-                party_size_input = int(input("How many people are in your party? "))
+                with ui.row():
+                    party_size_input = int(ui.input("How many people are in your party? ").value)
                 # self.party_size = party_size_input
                 break
             except ValueError:
@@ -70,7 +79,7 @@ def main():
 
     #checking to make sure that fancy restaurants are being pulled through
     #! this needs to be the # of fancy restaurants that can accomodate the given party size
-    print(len(fancy_restaurants), " Fancy Restaurants")
+    ui.label(f"{len(fancy_restaurants)} Fancy Restaurants")
 
     # Initialize restaurants based on the obtained fancy restaurants
     restaurants = [
@@ -105,16 +114,74 @@ def main():
         if bid_amount >= current_bid +10:
             break
         else:
-            print("Your bid is too low. Please enter a higher bid that is at least $10 more than the last bid")
+            ui.label("Your bid is too low. Please enter a higher bid that is at least $10 more than the last bid")
     
     # Place bid in bidding system
     bidding_system.place_bid(user, restaurant_name, bid_amount)
 
-    # View user's bidding history
+    # View user's bidding history 
     user.view_bidding_history()
 
-if __name__ == "__main__":
-    main()
+    ui.run(native=True)
+
+
+def show(event: ValueChangeEventArguments):
+    name = type(event.sender).__name__
+    ui.notify(f'{name}: {event.value}')   
+
+
+
+def submit_name(name_input_widget):
+    name_input = name_input_widget.value
+    user = User(name_input, "558 Broome Street", 2)
+    print(f"Name: {name_input}")
+
+def submit_address(address_input_widget):
+    address_input = address_input_widget.value
+    loc = Nominatim(user_agent="GetLoc")
+    getLoc = loc.geocode(address_input)
+
+    if getLoc: 
+        latitude = getLoc.latitude
+        longitude = getLoc.longitude
+        print("printing from main.py")
+        print((f"latitude: {latitude}" ))
+        print((f"longitude: {longitude}" ))
+
+        ui.label(f"latitude: {latitude}" )
+        ui.label(f"longitude: {longitude}" )
+    else:
+        print('Invalid address, try again')
+        # return self.register()
+
+
+
+def m():
+
+    latitude = 0
+    longitude = 0
+    
+    with ui.row():
+        name_input_widget = ui.input("First & Last Name")
+        ui.button('Next', on_click=lambda: submit_name(name_input_widget))
+
+    with ui.row():
+        address_input_widget = ui.input("Current Address")
+        ui.button('Next', on_click=lambda: submit_address(address_input_widget))
+            
+
+        # party_size_input = ui.input("# People in Party").value
+
+
+        # #! need to also return latitude and logitude somehow
+        # return name_input, address_input, party_size_input
+
+
+if __name__ in {"__main__", "__mp_main__"}:
+    # main()
+    m()
+    ui.run(native=True)
+    
 
 
 
