@@ -46,8 +46,8 @@ def register():
                     latitude = getLoc.latitude
                     longitude = getLoc.longitude
                     print("printing from user.py")
-                    ui.label(f"latitude: {latitude}" )
-                    ui.label(f"longitude: {longitude}" )
+                    # ui.label(f"latitude: {latitude}" )
+                    # ui.label(f"longitude: {longitude}" )
                     break
                 else:
                     print('Invalid address, try again')
@@ -140,18 +140,25 @@ def show(event: ValueChangeEventArguments):
 data = {'user': None, 'latitude': None, 'longitude': None, 'party_size': None}
 completion_counter = 0  # Counter to track the completion of steps
 
-def submit_name(name_input_widget, data):
+# Define global variables
+name_input_widget = None
+address_input_widget = None
+party_size_input_widget = None
+submit_button = None
+
+def submit_name(data):
+    global completion_counter
     name_input = name_input_widget.value
     user = User(name_input, "558 Broome Street", 2)
     print(f"Name: {name_input}")
 
     # Store the user value in the data dictionary
     data['user'] = user
-    global completion_counter
     completion_counter += 1
     check_completion()
 
-def submit_address(address_input_widget, data):
+def submit_address(data):
+    global completion_counter
     address_input = address_input_widget.value
     loc = Nominatim(user_agent="GetLoc")
     getLoc = loc.geocode(address_input)
@@ -167,17 +174,14 @@ def submit_address(address_input_widget, data):
         data['latitude'] = latitude
         data['longitude'] = longitude
         # Increment the completion counter
-        global completion_counter
         completion_counter += 1
         check_completion()
 
-        with ui.row():
-            ui.label(f"latitude: {latitude}")
-            ui.label(f"longitude: {longitude}")
     else:
         print('Invalid address, try again')
 
-def submit_party_size(party_size_input_widget, data):
+def submit_party_size(data):
+    global completion_counter
     party_size_input = party_size_input_widget.value
 
     print(f"Party Size: {party_size_input}")
@@ -185,7 +189,6 @@ def submit_party_size(party_size_input_widget, data):
     # Store party_size in the data dictionary
     data['party_size'] = party_size_input
     # Increment the completion counter
-    global completion_counter
     completion_counter += 1
     check_completion()
 
@@ -195,9 +198,20 @@ def check_completion():
     if completion_counter == 3:
         # Reset the completion counter for future runs
         completion_counter = 0
+        hide_components()
         n()
+        #!completion_counter = 0
+
+def hide_components():
+    global name_input_widget, address_input_widget, party_size_input_widget, submit_button
+    # Hide the three prompts and the submit button
+    name_input_widget.visible = False
+    address_input_widget.visible = False
+    party_size_input_widget.visible = False
+    submit_button.visible = False
 
 def m():
+    global name_input_widget, address_input_widget, party_size_input_widget, submit_button
     latitude = 0
     longitude = 0
 
@@ -211,12 +225,12 @@ def m():
         party_size_input_widget = ui.input("# People in Party")
 
     with ui.row():
-        ui.button('Submit', on_click=lambda: submit_all(name_input_widget, address_input_widget, party_size_input_widget, data))
+        submit_button = ui.button('Submit', on_click=lambda: submit_all(data))
 
-def submit_all(name_input_widget, address_input_widget, party_size_input_widget, data):
-    submit_name(name_input_widget, data)
-    submit_address(address_input_widget, data)
-    submit_party_size(party_size_input_widget, data)
+def submit_all(data):
+    submit_name(data)
+    submit_address(data)
+    submit_party_size(data)
 
 def n():
     # Access the stored values in data
@@ -235,6 +249,3 @@ def n():
 if __name__ in {"__main__", "__mp_main__"}:
     m()
     ui.run(native=True)
-
-
-    
