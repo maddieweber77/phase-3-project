@@ -3,7 +3,9 @@ class BiddingSystem:
     def __init__(self, restaurants):
         self.restaurants = restaurants
 
+
     def display_available_restaurants(self, party_size):
+        party_size = int(party_size)
         for restaurant in self.restaurants:
             if party_size <= restaurant.max_party_size:
                 print(f"Restaurant: {restaurant.name}, Max Party Size: {restaurant.max_party_size}, Current Bid: ${restaurant.current_bid}")
