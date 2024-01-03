@@ -4,6 +4,7 @@ class User:
     def __init__(self, name, location, party_size):
         self.name = name
         self.location = location
+        self.party_size = party_size
         self.bidding_history = []
 
     @property

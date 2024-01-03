@@ -20,13 +20,50 @@ def get_user_input(prompt, data_type=str, validation_function=None, **kwargs):
         except ValueError as e:
             print(str(e))
 
+def register():
+        name_input = input("What is your first and last name? ")
+
+        user = User(name_input,"558 Broome Street",2)
+
+        user.validate_name_input(name_input)
+        # User.self.name = name_input
+
+        while True:
+            address = input("What is your current location address? ")
+
+            loc = Nominatim(user_agent="GetLoc")
+            getLoc = loc.geocode(address)
+
+            if getLoc: 
+                latitude = getLoc.latitude
+                longitude = getLoc.longitude
+                print("printing from user.py")
+                print(f"latitude: {latitude}" )
+                print(f"longitude: {longitude}" )
+                break
+            else:
+                print('Invalid address, try again')
+                # return self.register()
+
+            
+            try:
+                party_size_input = int(input("How many people are in your party? "))
+                # self.party_size = party_size_input
+                break
+            except ValueError:
+                print("Invalid input. Please enter a valid party size (an integer between 1 and 10).")
+
+
+        return user, latitude, longitude
+
 def is_valid_bid(bid_amount, minimum_bid):
     return bid_amount>= minimum_bid
 
 
 def main():
+    
     # Initialize user
-    user, latitude, longitude = User("M W", "2", 2).register()
+    user, latitude, longitude = register()
     
     # Get fancy restaurants
     fancy_restaurants = get_fancy_restaurants(latitude, longitude)
