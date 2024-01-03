@@ -1,11 +1,9 @@
 from geopy.geocoders import Nominatim
-from current_location import get_neighborhood
 
 class User:
-    def __init__(self, name, location, party_size, neighborhood=None):
+    def __init__(self, name, location, party_size):
         self.name = name
         self.location = location
-        self.neighborhood = neighborhood
         self.bidding_history = []
 
     @property
@@ -72,20 +70,8 @@ class User:
         if any(char.isdigit() for char in name_input):
             raise ValueError("Invalid name. Numbers are not allowed in the name.")
 
-    def register(self):
-        valid_neighborhoods = [
-            "Upper West Side",
-            "Upper East Side",
-            "Midtown",
-            "Chelsea",
-            "Greenwich Village",
-            "SoHo",
-            "Tribeca",
-            "Financial District",
-            "Harlem",
-            "East Village",
-        ]
 
+    def register(self):
         name_input = input("What is your first and last name? ")
         self.validate_name_input(name_input)
         self.name = name_input
@@ -98,9 +84,7 @@ class User:
         if getLoc: 
             latitude = getLoc.latitude
             longitude = getLoc.longitude
-            neighborhood = get_neighborhood(latitude, longitude)
             print("printing from user.py")
-            print(f"You are in the neighborhood: {neighborhood}")
             print(f"latitude: {latitude}" )
             print(f"longitude: {longitude}" )
         else:

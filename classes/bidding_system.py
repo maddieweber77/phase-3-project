@@ -4,20 +4,22 @@ class BiddingSystem:
         self.restaurants = restaurants
 
     def display_available_restaurants(self, party_size, user_neighborhood):
+        for restaurant in self.restaurants:
+            print(f"Restaurant: {restaurant.name}, Max Party Size: {restaurant.max_party_size}")
+            print(f"Party Size: {party_size}")
+            print(f"Condition Result: {party_size <= restaurant.max_party_size}")
         while True:
             available_restaurants = [
                 restaurant
                 for restaurant in self.restaurants
                 if (
                 party_size <= restaurant.max_party_size
-                and restaurant.neighborhood
-                and restaurant.neighborhood.lower() == user_neighborhood.lower()
                 )
             ]
 
             if not available_restaurants:
                 print(
-                    f"No available restaurants in {user_neighborhood} for the specified party size. Please try again"
+                    f"No available restaurants available in your area for the specified party size. Please try again"
                 )
                 
                 # Re-prompt user for neighborhood and party size
@@ -26,9 +28,8 @@ class BiddingSystem:
                 
                 # Update party size and neighborhood
                 party_size = user.party_size
-                user_neighborhood = user.location
             else:
-                print(f"Available Restaurants in {user_neighborhood}: ")
+                print(f"Available Restaurants: ")
                 for restaurant in available_restaurants:
                     restaurant.display_info(user_neighborhood)
                 break  # Break out of the loop when there are available restaurants

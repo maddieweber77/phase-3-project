@@ -2,7 +2,7 @@ from geopy.geocoders import Nominatim
 from user import User
 from bidding_system import BiddingSystem
 from restaurant import Restaurant
-from current_location import get_neighborhood, get_fancy_restaurants
+from current_location import get_fancy_restaurants
 import random
 
 # Make sure all files are imported
@@ -27,20 +27,12 @@ def is_valid_bid(bid_amount, minimum_bid):
 def main():
     # Initialize user
     user, latitude, longitude = User("M W", "2", 2).register()
-
-   # use the user's location that we obtained during registation (in user)
-    user_location = get_neighborhood(latitude, longitude)
     
     # Get fancy restaurants
     fancy_restaurants = get_fancy_restaurants(latitude, longitude)
 
-    # Check if the API request was successful
-    if isinstance(fancy_restaurants, list) and fancy_restaurants:
-        print("\nFancy Restaurants:")
-        for restaurant in fancy_restaurants:
-            print(restaurant.get('name'))
-    else:
-        print("No fancy restaurants found.")
+    #checking to make sure that fancy restaurants are being pulled through
+    print("Number of fancy restaurants:", len(fancy_restaurants))
 
     # Initialize restaurants based on the obtained fancy restaurants
     restaurants = [
@@ -48,7 +40,6 @@ def main():
             name=restaurant.get('name'),
             max_party_size=random.randint(2,10),
             current_bid=random.randint(10,100),
-            neighborhood=user.neighborhood
         )
         for restaurant in fancy_restaurants
     ]
@@ -57,7 +48,7 @@ def main():
     bidding_system = BiddingSystem(restaurants)
 
     # Display available restaurants based on a user's location
-    bidding_system.display_available_restaurants(party_size=user.party_size, user_neighborhood=user_location)
+    bidding_system.display_available_restaurants(party_size=user.party_size)
 
     # Get user bid info
     restaurant_name = get_user_input(
