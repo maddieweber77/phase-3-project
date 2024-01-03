@@ -127,7 +127,13 @@ def main():
 
 def show(event: ValueChangeEventArguments):
     name = type(event.sender).__name__
-    ui.notify(f'{name}: {event.value}')   
+    ui.notify(f'{name}: {event.value}')  
+
+
+
+#! ################   niceGUI code below  ################ 
+##########################################################
+#! ################   niceGUI code below  ################ 
 
 
 
@@ -148,11 +154,17 @@ def submit_address(address_input_widget):
         print((f"latitude: {latitude}" ))
         print((f"longitude: {longitude}" ))
 
-        ui.label(f"latitude: {latitude}" )
-        ui.label(f"longitude: {longitude}" )
+        with ui.row():
+            ui.label(f"latitude: {latitude}" )
+            ui.label(f"longitude: {longitude}" )
     else:
         print('Invalid address, try again')
         # return self.register()
+
+def submit_party_size(party_size_input_widget):
+    party_size_input = party_size_input_widget.value
+
+    print(f"Party Size: {party_size_input}")
 
 
 
@@ -168,6 +180,12 @@ def m():
     with ui.row():
         address_input_widget = ui.input("Current Address")
         ui.button('Next', on_click=lambda: submit_address(address_input_widget))
+    
+    
+    with ui.row():
+        party_size_input_widget = ui.input("# People in Party")
+        ui.button('Next', on_click=lambda: submit_party_size(party_size_input_widget))
+        
             
 
         # party_size_input = ui.input("# People in Party").value
