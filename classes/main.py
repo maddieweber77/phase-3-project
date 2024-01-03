@@ -203,15 +203,20 @@ def m():
 
     with ui.row():
         name_input_widget = ui.input("First & Last Name")
-        ui.button('Next', on_click=lambda: submit_name(name_input_widget, data))
 
     with ui.row():
         address_input_widget = ui.input("Current Address")
-        ui.button('Next', on_click=lambda: submit_address(address_input_widget, data))
 
     with ui.row():
         party_size_input_widget = ui.input("# People in Party")
-        ui.button('Next', on_click=lambda: submit_party_size(party_size_input_widget, data))
+
+    with ui.row():
+        ui.button('Submit', on_click=lambda: submit_all(name_input_widget, address_input_widget, party_size_input_widget, data))
+
+def submit_all(name_input_widget, address_input_widget, party_size_input_widget, data):
+    submit_name(name_input_widget, data)
+    submit_address(address_input_widget, data)
+    submit_party_size(party_size_input_widget, data)
 
 def n():
     # Access the stored values in data
@@ -220,8 +225,16 @@ def n():
     print("Longitude:", data['longitude'])
     print("Party Size:", data['party_size'])
 
+    # now getting fancy restaurants in that area
+    fancy_restaurants = get_fancy_restaurants(data['latitude'], data['longitude'])
+
+    # checking to make sure that fancy restaurants are being pulled through
+    with ui.row():
+        ui.label(f"{len(fancy_restaurants)} Fancy Restaurants")
+
 if __name__ in {"__main__", "__mp_main__"}:
     m()
     ui.run(native=True)
+
 
     
