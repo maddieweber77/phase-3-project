@@ -1,6 +1,8 @@
 from geopy.geocoders import Nominatim
 import sqlite3
 import requests
+from restaurant import Restaurant
+import random
 
 def get_fancy_restaurants(lat, lng):
     url = "https://maps-data.p.rapidapi.com/searchmaps.php"
@@ -26,7 +28,13 @@ def get_fancy_restaurants(lat, lng):
         # for place in places:
         #     print(place.get('name'))
 
-        return places
+        return [
+        Restaurant(
+            name=place.get('name'),
+            max_party_size=random.randint(2, 10)
+        )
+        for place in places
+    ]
     else:
         print(f"Error: {response.status_code} - {response.text}")
         return []

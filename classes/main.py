@@ -210,6 +210,22 @@ def hide_components():
     party_size_input_widget.visible = False
     submit_button.visible = False
 
+def display_available_restaurants(restaurants, party_size):
+        party_size = int(party_size)
+        available_restaurants = [
+            restaurant
+            for restaurant in restaurants
+            if party_size <= restaurant.max_party_size
+        ]
+
+        # Display available restaurants on the GUI
+        with ui.column():
+            with ui.row():
+                ui.label(f"Available Restaurants for Party Size {party_size}")
+            for idx, restaurant in enumerate(available_restaurants, start=1):
+                with ui.row():
+                    ui.label(f"{idx}. {restaurant.name} - Max Party Size: {restaurant.max_party_size} - Current Bid: ${restaurant.current_bid}")
+
 def m():
     global name_input_widget, address_input_widget, party_size_input_widget, submit_button
     latitude = 0
@@ -243,38 +259,33 @@ def re_search():
     reSearch_button.visible = False
 
 def n():
+    global reSearch_button
+
     # Access the stored values in data
     print("User:", data['user'])
     print("Latitude:", data['latitude'])
     print("Longitude:", data['longitude'])
     print("Party Size:", data['party_size'])
 
-    #adding button to re-search if you want
+    # Adding button to re-search if you want
     with ui.row():
-        global reSearch_button
         reSearch_button = ui.button('Re-Search', on_click=lambda: re_search())
 
-    # now getting fancy restaurants in that area
+    # Hide the "Re-Search" button (if it exists)
+    if reSearch_button:
+        reSearch_button.visible = False
+
+    # Reset the visibility of the input widgets and the submit button
+    name_input_widget.visible = True
+    address_input_widget.visible = True
+    party_size_input_widget.visible = True
+    submit_button.visible = True
+
+    # Now getting fancy restaurants in that area
     fancy_restaurants = get_fancy_restaurants(data['latitude'], data['longitude'])
 
-    # checking to make sure that fancy restaurants are being pulled through
-    # with ui.row():
-    #     ui.label(f"{len(fancy_restaurants)} Fancy Restaurants")
-
-    # Initialize restaurants based on the obtained fancy restaurants
-    restaurants = [
-        Restaurant(
-            name=restaurant.get('name'),
-            max_party_size=random.randint(2,10)
-        )
-        for restaurant in fancy_restaurants
-    ]
-
-    # Bidding system now has access to the restaurants object
-    bidding_system = BiddingSystem(restaurants)
-
     # Display available restaurants based on a user's location
-    bidding_system.display_available_restaurants(party_size=data['party_size'])
+    display_available_restaurants(fancy_restaurants, party_size=data['party_size'])
 
 if __name__ in {"__main__", "__mp_main__"}:
     m()
