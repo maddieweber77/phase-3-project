@@ -133,6 +133,7 @@ def show(event: ValueChangeEventArguments):
 data = {'user': None, 'latitude': None, 'longitude': None, 'party_size': None}
 completion_counter = 0  # Counter to track the completion of steps
 completion_counter_2 = 0 #this is to show the questions about bidding on a restaurant
+data_2 = {'restaurant_name': None, 'bid_amount': None}
 
 # Define global variables
 name_input_widget = None
@@ -142,6 +143,7 @@ submit_button = None
 
 bidding_input_widget = None
 bidding_amount_input_widget = None
+submit_button_2 = None
 
 def submit_name(data):
     global completion_counter
@@ -199,18 +201,37 @@ def check_completion():
         hide_components()
         n()
 
-def check_completion_2():
+def submit_bidding(bidding_system, data_2): 
+    global completion_counter_2
+    restaurant_name = bidding_input_widget.value
+    bid_amount = bidding_amount_input_widget.value
+
+    # Validate bid amount (must be $10 greater than last bid, add your logic)
+    # ...
+
+    # Store bidding data in the data_2 dictionary
+    data_2['restaurant_name'] = restaurant_name
+    data_2['bid_amount'] = bid_amount
+
+    #! is there a way to now hide the bidding questions?
+    completion_counter_2 += 1
+    check_completion_2(bidding_system)
+
+def check_completion_2(bidding_system):
     global completion_counter_2
     if completion_counter_2 == 1:
-        completion_counter_2 =0
-        show_bidding_questions() #! need to define this 
+        show_bidding_questions(bidding_system)
+    if completion_counter_2==2:
+         bidding_system.place_bid(data['user'], data_2['restaurant_name'], data_2['bid_amount']) 
 
-def show_bidding_questions():
-    global bidding_amount_input_widget, bidding_input_widget
+def show_bidding_questions(bidding_system):
+    global bidding_amount_input_widget, bidding_input_widget, submit_button_2
     with ui.row():
         bidding_input_widget = ui.input("Enter Restaurant to Bid On?")
     with ui.row():
         bidding_amount_input_widget = ui.input("Bid Amount (must be $10 greater than last bid)")
+    with ui.row():
+        submit_button_2 = ui.button('Submit', on_click=lambda: submit_bidding(bidding_system, data_2))
 
 def hide_components():
     global name_input_widget, address_input_widget, party_size_input_widget, submit_button
@@ -220,7 +241,7 @@ def hide_components():
     party_size_input_widget.visible = False
     submit_button.visible = False
 
-def display_available_restaurants(restaurants, party_size):
+def display_available_restaurants(restaurants, party_size, bidding_system):
         global completion_counter_2
         completion_counter_2 +=1
         party_size = int(party_size)
@@ -238,7 +259,7 @@ def display_available_restaurants(restaurants, party_size):
             for idx, restaurant in enumerate(available_restaurants, start=1):
                 with ui.row():
                     ui.label(f"{idx}. {restaurant.name} - Max Party Size: {restaurant.max_party_size} - Current Bid: ${restaurant.current_bid}")
-        check_completion_2()
+        check_completion_2(bidding_system)
 
 def m():
     global name_input_widget, address_input_widget, party_size_input_widget, submit_button
@@ -255,7 +276,7 @@ def m():
         party_size_input_widget = ui.input("# People in Party")
 
     with ui.row():
-        submit_button = ui.button('Submit', on_click=lambda: submit_all(data))
+        submit_button = ui.button('Next', on_click=lambda: submit_all(data))
 
 def submit_all(data):
     submit_name(data)
@@ -280,7 +301,7 @@ def re_search():
     reSearch_button.visible = False
 
 def n():
-    global reSearch_button
+    global reSearch_button, bidding_system
 
     # Access the stored values in data
     print("User:", data['user'])
@@ -288,9 +309,13 @@ def n():
     print("Longitude:", data['longitude'])
     print("Party Size:", data['party_size'])
 
+    # Instantiate the bidding system with the list of restaurants
+    fancy_restaurants = get_fancy_restaurants(data['latitude'], data['longitude'])
+    bidding_system = BiddingSystem(restaurants=fancy_restaurants)
+
     # Adding button to re-search if you want
     with ui.row():
-        reSearch_button = ui.button('Re-Search', on_click=lambda: re_search())
+        reSearch_button = ui.button('Re-Search', on_click=lambda: re_search(bidding_system))
 
     # Hide the "Re-Search" button (if it exists)
     if reSearch_button:
@@ -302,11 +327,13 @@ def n():
     party_size_input_widget.visible = True
     submit_button.visible = True
 
-    # Now getting fancy restaurants in that area
-    fancy_restaurants = get_fancy_restaurants(data['latitude'], data['longitude'])
-
     # Display available restaurants based on a user's location
-    display_available_restaurants(fancy_restaurants, party_size=data['party_size'])
+    display_available_restaurants(
+        fancy_restaurants,
+        party_size=data['party_size'],
+        bidding_system=bidding_system  # Pass the bidding system
+    )
+
 
 if __name__ in {"__main__", "__mp_main__"}:
     m()
