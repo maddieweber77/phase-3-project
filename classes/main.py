@@ -79,7 +79,8 @@ def main():
 
     #checking to make sure that fancy restaurants are being pulled through
     #! this needs to be the # of fancy restaurants that can accomodate the given party size
-    ui.label(f"{len(fancy_restaurants)} Fancy Restaurants")
+    with ui.row():
+        ui.label(f'{len(fancy_restaurants)} Fancy Restaurants')
 
     # Initialize restaurants based on the obtained fancy restaurants
     restaurants = [
@@ -257,8 +258,8 @@ def n():
     fancy_restaurants = get_fancy_restaurants(data['latitude'], data['longitude'])
 
     # checking to make sure that fancy restaurants are being pulled through
-    with ui.row():
-        ui.label(f"{len(fancy_restaurants)} Fancy Restaurants")
+    # with ui.row():
+    #     ui.label(f"{len(fancy_restaurants)} Fancy Restaurants")
 
     # Initialize restaurants based on the obtained fancy restaurants
     restaurants = [

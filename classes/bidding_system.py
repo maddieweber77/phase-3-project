@@ -1,39 +1,25 @@
 from user import User
+from nicegui import ui
+
 class BiddingSystem:
     def __init__(self, restaurants):
         self.restaurants = restaurants
 
-
     def display_available_restaurants(self, party_size):
         party_size = int(party_size)
-        for restaurant in self.restaurants:
-            if party_size <= restaurant.max_party_size:
-                print(f"Restaurant: {restaurant.name}, Max Party Size: {restaurant.max_party_size}, Current Bid: ${restaurant.current_bid}")
-        while True:
-            available_restaurants = [
-                restaurant
-                for restaurant in self.restaurants
-                if (
-                party_size <= restaurant.max_party_size
-                )
-            ]
+        available_restaurants = [
+            restaurant
+            for restaurant in self.restaurants
+            if party_size <= restaurant.max_party_size
+        ]
 
-            if not available_restaurants:
-                print(
-                    f"No available restaurants available in your area for the specified party size. Please try again"
-                )
-                
-                # Re-prompt user for neighborhood and party size
-                user = User("dummy", "dummy", 0)
-                user.register()
-                
-                # Update party size and neighborhood
-                party_size = user.party_size
-            else:
-                # print(f"Available Restaurants: ")
-                # for restaurant in available_restaurants:
-                #     restaurant.display_info(user_neighborhood)
-                break  # Break out of the loop when there are available restaurants
+        # Display available restaurants on the GUI
+        with ui.column():
+            with ui.row():
+                ui.label(f"Available Restaurants for Party Size {party_size}")
+            for idx, restaurant in enumerate(available_restaurants, start=1):
+                with ui.row():
+                    ui.label(f"{idx}. {restaurant.name} - Max Party Size: {restaurant.max_party_size} - Current Bid: ${restaurant.current_bid}")
 
     def place_bid(self, user, restaurant_name, bid_amount):
         for restaurant in self.restaurants:
