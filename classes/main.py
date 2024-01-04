@@ -132,12 +132,16 @@ def show(event: ValueChangeEventArguments):
 # Use a dictionary to store values
 data = {'user': None, 'latitude': None, 'longitude': None, 'party_size': None}
 completion_counter = 0  # Counter to track the completion of steps
+completion_counter_2 = 0 #this is to show the questions about bidding on a restaurant
 
 # Define global variables
 name_input_widget = None
 address_input_widget = None
 party_size_input_widget = None
 submit_button = None
+
+bidding_input_widget = None
+bidding_amount_input_widget = None
 
 def submit_name(data):
     global completion_counter
@@ -168,6 +172,7 @@ def submit_address(data):
         data['longitude'] = longitude
         # Increment the completion counter
         completion_counter += 1
+        
         check_completion()
 
     else:
@@ -194,6 +199,19 @@ def check_completion():
         hide_components()
         n()
 
+def check_completion_2():
+    global completion_counter_2
+    if completion_counter_2 == 1:
+        completion_counter_2 =0
+        show_bidding_questions() #! need to define this 
+
+def show_bidding_questions():
+    global bidding_amount_input_widget, bidding_input_widget
+    with ui.row():
+        bidding_input_widget = ui.input("Enter Restaurant to Bid On?")
+    with ui.row():
+        bidding_amount_input_widget = ui.input("Bid Amount (must be $10 greater than last bid)")
+
 def hide_components():
     global name_input_widget, address_input_widget, party_size_input_widget, submit_button
     # Hide the three prompts and the submit button
@@ -203,6 +221,8 @@ def hide_components():
     submit_button.visible = False
 
 def display_available_restaurants(restaurants, party_size):
+        global completion_counter_2
+        completion_counter_2 +=1
         party_size = int(party_size)
         available_restaurants = [
             restaurant
@@ -210,6 +230,7 @@ def display_available_restaurants(restaurants, party_size):
             if party_size <= restaurant.max_party_size
         ]
 
+        #! After this shows up, there needs to be a prompt that asks which restaurant you want to bid on and for how much 
         # Display available restaurants on the GUI
         with ui.column():
             with ui.row():
@@ -217,6 +238,7 @@ def display_available_restaurants(restaurants, party_size):
             for idx, restaurant in enumerate(available_restaurants, start=1):
                 with ui.row():
                     ui.label(f"{idx}. {restaurant.name} - Max Party Size: {restaurant.max_party_size} - Current Bid: ${restaurant.current_bid}")
+        check_completion_2()
 
 def m():
     global name_input_widget, address_input_widget, party_size_input_widget, submit_button
