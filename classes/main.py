@@ -91,14 +91,6 @@ def main():
         for restaurant in fancy_restaurants
     ]
 
-    
-
-    # Bidding system now has access to the restaurants object
-    bidding_system = BiddingSystem(restaurants)
-
-    # Display available restaurants based on a user's location
-    bidding_system.display_available_restaurants(party_size=user.party_size)
-
     # Get user bid info
     restaurant_name = get_user_input(
         "Which restaurant do you want to bid on? ",
@@ -247,6 +239,13 @@ def submit_all(data):
     submit_name(data)
     submit_address(data)
     submit_party_size(data)
+
+    reSearch_button.visible = True
+    name_input_widget.visible = False
+    address_input_widget.visible = False
+    party_size_input_widget.visible = False
+    submit_button.visible = False
+
 
 def re_search():
     global name_input_widget, address_input_widget, party_size_input_widget, submit_button
