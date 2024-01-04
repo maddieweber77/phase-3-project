@@ -106,6 +106,16 @@ def check_completion_2(bidding_system):
         show_bidding_questions(bidding_system)
     if completion_counter_2==2:
          bidding_system.place_bid(data['user'], data_2['restaurant_name'], data_2['bid_amount']) 
+         # Reset the completion counter_2 for future runs
+         completion_counter_2 = 0
+         # Hide the bidding questions after placing the bid
+         hide_bidding_questions()
+
+def hide_bidding_questions():
+    global bidding_input_widget, bidding_amount_input_widget, submit_button_2
+    bidding_input_widget.visible = False
+    bidding_amount_input_widget.visible = False
+    submit_button_2.visible = False
 
 def show_bidding_questions(bidding_system):
     global bidding_amount_input_widget, bidding_input_widget, submit_button_2
@@ -221,3 +231,11 @@ def n():
 if __name__ in {"__main__", "__mp_main__"}:
     m()
     ui.run(native=True)
+
+
+#! need to make sure that when someone types in a restaurant, it is in the list of current restaurants
+    
+#! need to make sure that the bid is $10 more than the last bid 
+    # should we multiply $10 by the # of people?
+
+#! let's make the restaurant name / party size / bid amount into buttons instead, and when you click on the button, it then prompts you to enter a bid for that specfic restaurant
