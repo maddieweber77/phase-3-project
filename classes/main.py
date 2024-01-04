@@ -506,6 +506,13 @@ def hide_all_components():
     party_size_input_widget.visible = False
     submit_button.visible = False
 
+    #! we need to check to see if the restaurant buttons exist, and if they do, then we need to make them hidden
+    # Check and hide restaurant buttons if they exist
+    global restaurant_buttons
+    if restaurant_buttons:
+        for button in restaurant_buttons:
+            button.visible = False
+
 def show_screen_1():
     hide_all_components()
     name_input_widget.visible = True
