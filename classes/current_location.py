@@ -52,16 +52,6 @@ def fetch_reservations_from_db():
     return reservations
 
 def main(latitude, longitude):
-    # loc = Nominatim(user_agent="GetLoc")
-    # address = input("What is your address? ")
-    # getLoc = loc.geocode(address)
-
-    # if getLoc:
-    #     latitude = getLoc.latitude
-    #     longitude = getLoc.longitude
-
-    #     print("Latitude =", latitude)
-    #     print("Longitude =", longitude)
 
         # Get fancy restaurants
         response = get_fancy_restaurants(latitude, longitude)
