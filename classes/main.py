@@ -84,26 +84,8 @@ def check_completion():
         hide_components()
         n()
 
-def submit_bidding(bidding_system, data_2): 
-    global completion_counter_2
-    restaurant_name = bidding_input_widget.value
-    bid_amount = bidding_amount_input_widget.value
-
-    # Validate bid amount (must be $10 greater than last bid, add your logic)
-    # ...
-
-    # Store bidding data in the data_2 dictionary
-    data_2['restaurant_name'] = restaurant_name
-    data_2['bid_amount'] = bid_amount
-
-    #! is there a way to now hide the bidding questions?
-    completion_counter_2 += 1
-    check_completion_2(bidding_system)
-
 def check_completion_2(bidding_system):
     global completion_counter_2
-    if completion_counter_2 == 1:
-        show_bidding_questions(bidding_system)
     if completion_counter_2==2:
          bidding_system.place_bid(data['user'], data_2['restaurant_name'], data_2['bid_amount']) 
          # Reset the completion counter_2 for future runs
@@ -117,15 +99,6 @@ def hide_bidding_questions():
     bidding_amount_input_widget.visible = False
     submit_button_2.visible = False
 
-def show_bidding_questions(bidding_system):
-    global bidding_amount_input_widget, bidding_input_widget, submit_button_2
-    with ui.row():
-        bidding_input_widget = ui.input("Enter Restaurant to Bid On?")
-    with ui.row():
-        bidding_amount_input_widget = ui.input("Bid Amount (must be $10 greater than last bid)")
-    with ui.row():
-        submit_button_2 = ui.button('Submit', on_click=lambda: submit_bidding(bidding_system, data_2))
-
 def hide_components():
     global name_input_widget, address_input_widget, party_size_input_widget, submit_button
     # Hide the three prompts and the submit button
@@ -135,24 +108,56 @@ def hide_components():
     submit_button.visible = False
 
 def display_available_restaurants(restaurants, party_size, bidding_system):
-        global completion_counter_2
-        completion_counter_2 +=1
-        party_size = int(party_size)
-        available_restaurants = [
-            restaurant
-            for restaurant in restaurants
-            if party_size <= restaurant.max_party_size
-        ]
+    global completion_counter_2
+    completion_counter_2 += 1
+    party_size = int(party_size)
+    available_restaurants = [
+        restaurant
+        for restaurant in restaurants
+        if party_size <= restaurant.max_party_size
+    ]
 
-        #! After this shows up, there needs to be a prompt that asks which restaurant you want to bid on and for how much 
-        # Display available restaurants on the GUI
-        with ui.column():
+    # Display available restaurants on the GUI
+    with ui.column():
+        with ui.row():
+            ui.html(f"<strong>Available Restaurants for Party Size {party_size}</strong>")
+        for idx, restaurant in enumerate(available_restaurants, start=1):
+            # Use a lambda function to capture the specific restaurant when the button is clicked
+            on_click_handler = lambda restaurant=restaurant: prompt_bid(restaurant, bidding_system)
             with ui.row():
-                ui.label(f"Available Restaurants for Party Size {party_size}")
-            for idx, restaurant in enumerate(available_restaurants, start=1):
-                with ui.row():
-                    ui.label(f"{idx}. {restaurant.name} - Max Party Size: {restaurant.max_party_size} - Current Bid: ${restaurant.current_bid}")
-        check_completion_2(bidding_system)
+                ui.button(f"{idx}. {restaurant.name} - Max Party Size: {restaurant.max_party_size} - Current Bid: ${restaurant.current_bid}", on_click=on_click_handler)
+
+    check_completion_2(bidding_system)
+
+def prompt_bid(restaurant, bidding_system):
+    global bidding_amount_input_widget, submit_button_2
+
+    # Display a prompt for the user to enter a bid for the specific restaurant
+    with ui.row():
+        bidding_amount_input_widget = ui.input(f"Bid Amount for {restaurant.name} (must be $10 greater than last bid)")
+    with ui.row():
+        submit_button_2 = ui.button('Submit', on_click=lambda: submit_bid(restaurant, bidding_system))
+
+def submit_bid(restaurant, bidding_system):
+    global data_2, completion_counter_2
+
+    bid_amount = bidding_amount_input_widget.value
+
+    # Validate bid amount (must be $10 greater than last bid, add your logic)
+    # ...
+
+    # Store bidding data in the data_2 dictionary
+    data_2['restaurant_name'] = restaurant.name
+    data_2['bid_amount'] = bid_amount
+
+    # Place the bid for the specific restaurant
+    bidding_system.place_bid(data['user'], data_2['restaurant_name'], data_2['bid_amount'])
+
+    # Hide the bidding questions after placing the bid
+    hide_bidding_questions()
+
+    completion_counter_2 += 1
+    check_completion_2(bidding_system)
 
 def m():
     global name_input_widget, address_input_widget, party_size_input_widget, submit_button
