@@ -320,6 +320,7 @@ def show_screen_3(restaurant_name, bid_amount):
     bid_placed_label = ui.notify(f'Bid placed successfully for {restaurant_name} for ${bid_amount}.')
     
     show_start_over_button()
+    show_screen_4()
 
 def show_screen_4():
     hide_all_components()
@@ -328,7 +329,7 @@ def show_screen_4():
     with ui.column():
         # Header for Your Reservations
         with ui.row():
-            ui.header('Your Reservations')
+            ui.html('<strong>Your Reservations</strong>')
 
         # Display reservations
         with ui.row():
@@ -339,7 +340,7 @@ def show_screen_4():
                 # Add more reservations as needed
             ]
             for idx, reservation in enumerate(reservations, start=1):
-                ui.text(f"{idx}. {reservation['name']} - Time: {reservation['time']}")
+                ui.label(f"{idx}. {reservation['name']} - Time: {reservation['time']}")
 
     # Include the Start Over button on Screen 4
     show_start_over_button()
@@ -404,6 +405,7 @@ if __name__ in {"__main__", "__mp_main__"}:
         .nice-button:hover {
             background-color: white !important; /* White background on hover */
             color: #808080 !important; /* Grey text color on hover */
+        }
         
         /* Style for the column of restaurant buttons */
         .restaurant-buttons-column {
@@ -411,6 +413,7 @@ if __name__ in {"__main__", "__mp_main__"}:
             flex-direction: column;
             align-items: center; /* Center the buttons horizontally */
             margin-top: 20px; /* Adjust the top margin as needed */
+        }
         
         /* Style for the main container */
         .main-container {
