@@ -16,9 +16,6 @@ class BiddingSystem:
                     }
                 )
                 restaurant.current_bid = bid_amount
-                with ui.column():
-                    with ui.row():
-                        ui.html(f'<strong>Bid placed successfully for {restaurant_name} for ${bid_amount}.</strong>')
                 print(
                     f"Bid placed successfully for {restaurant_name} for ${bid_amount}."
                 )
