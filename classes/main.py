@@ -19,6 +19,7 @@ data = {'user': None, 'latitude': None, 'longitude': None, 'party_size': None}
 completion_counter = 0
 completion_counter_2 = 0
 data_2 = {'restaurant_name': None, 'bid_amount': None}
+bid_placed = False 
 
 # Global Variables
 name_input_widget = None
@@ -177,13 +178,15 @@ def prompt_bid(restaurant, bidding_system):
         submit_button_2 = ui.button('Submit', on_click=lambda: submit_bid(restaurant, bidding_system))
 
 def submit_bid(restaurant, bidding_system):
-    global data_2, completion_counter_2
+    global data_2, completion_counter_2, bid_placed
     bid_amount = bidding_amount_input_widget.value
 
     data_2['restaurant_name'] = restaurant.name
     data_2['bid_amount'] = bid_amount
 
     bidding_system.place_bid(data['user'], data_2['restaurant_name'], data_2['bid_amount'])
+
+    bid_placed = True
 
     # Switch to Screen 3 after submitting bid
     switch_to_screen(SCREEN_3)
@@ -235,8 +238,8 @@ def hide_all_components():
 
     #Hide all from screen 2
 
-    if available_restaurants_label is None:
-        available_restaurants_label = ui.html("")
+    # if available_restaurants_label is None:
+    #     available_restaurants_label = ui.html("")
 
     if available_restaurants_label is not None:
         available_restaurants_label.visible = False
@@ -247,12 +250,21 @@ def hide_all_components():
         for button in restaurant_buttons:
             button.visible = False
     
+    if bid_placed:
+        available_restaurants_label = ui.html("")
+    
     #hide all from screen 3
     if bidding_amount_input_widget is not None:
         bidding_amount_input_widget.visible = False
     
     if submit_button_2 is not None:
         submit_button_2.visible = False
+    
+    # Hide bid success message
+    if bid_placed:
+        with ui.row():
+            ui.html("")  # This is an empty html element to clear the bid success message
+
 
 def show_screen_1():
     hide_all_components()
@@ -285,10 +297,10 @@ def show_screen_2():
 
 
 def show_screen_3(restaurant_name, bid_amount):
+    global bid_placed_label
     hide_all_components()
     # Display Screen 3 components
-    with ui.row():
-        ui.html(f'<strong>Bid placed successfully for {restaurant_name} for ${bid_amount}.</strong>')
+    bid_placed_label = ui.notify(f'Bid placed successfully for {restaurant_name} for ${bid_amount}.')
     
     show_start_over_button()
 
