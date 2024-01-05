@@ -129,7 +129,7 @@ def show_start_over_button():
 
 def create_start_over_button():
     global start_over_button
-    start_over_button = ui.button('Start Over', on_click=lambda: start_over())
+    start_over_button = ui.button('Start Over', on_click=lambda: start_over()).classes('nice-button')
 
 def start_over():
     global completion_counter, completion_counter_2, data, data_2, current_screen, available_restaurants_num, restaurant_buttons, bidding_amount_widgets, submit_button_widgets
@@ -181,7 +181,7 @@ def prompt_bid(restaurant, bidding_system):
         bidding_amount_input_widget = ui.input(f"Bid Amount for {restaurant.name} (must be $10 greater than last bid)")
         bidding_amount_widgets.append(bidding_amount_input_widget)
     with ui.row():
-        submit_button_2 = ui.button('Submit', on_click=lambda: submit_bid(restaurant, bidding_system))
+        submit_button_2 = ui.button('Submit', on_click=lambda: submit_bid(restaurant, bidding_system)).classes('nice-button')
         submit_button_widgets.append(submit_button_2)
 
 def submit_bid(restaurant, bidding_system):
@@ -221,7 +221,7 @@ def m():
         party_size_input_widget = ui.input("# People in Party")
 
     with ui.row():
-        submit_button = ui.button('Next', on_click=lambda: submit_all(data))
+        submit_button = ui.button('Next', on_click=lambda: submit_all(data)).classes('nice-button')
 
 # Screen Variables
 SCREEN_1 = 1
@@ -308,7 +308,7 @@ def show_screen_2():
     available_restaurants = get_hardcoded_restaurants(data['latitude'], data['longitude'])
     for idx, restaurant in enumerate(available_restaurants, start=1):
         on_click_handler = lambda restaurant=restaurant: handle_button_click(restaurant, bidding_system)
-        with ui.column():
+        with ui.column().classes('main-container'):
             button = ui.button(f"{idx}. {restaurant.name} - Max Party Size: {restaurant.max_party_size} - Current Bid: ${restaurant.current_bid}", on_click=on_click_handler)
             restaurant_buttons.append(button)
 
@@ -347,7 +347,7 @@ def show_screen_4():
 def create_your_reservations_button():
     global your_reservations_button
     if your_reservations_button is None:
-        your_reservations_button = ui.button('Your Reservations', on_click=lambda: switch_to_screen(SCREEN_4))
+        your_reservations_button = ui.button('Your Reservations', on_click=lambda: switch_to_screen(SCREEN_4)).classes('nice-button')
 
 def submit_all(data):
     submit_name(data)
@@ -382,5 +382,46 @@ def n():
     create_your_reservations_button()
 
 if __name__ in {"__main__", "__mp_main__"}:
+    ui.add_head_html('''
+    <style>
+        /* Style all buttons to look more sleek */
+        .nice-button {
+            background-color: #808080 !important; /* Grey background color */
+            color: white; /* White text color */
+            border: 2px solid #808080; /* Grey border */
+            padding: 10px 20px; /* Padding around text */
+            text-align: center; /* Center text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Make it inline block */
+            font-size: 16px; /* Font size */
+            margin: 4px 2px; /* Margin around the button */
+            cursor: pointer; /* Cursor style */
+            border-radius: 8px; /* Rounded corners */
+            transition-duration: 0.3s; /* Animation duration */
+        }
+
+        /* Hover effect */
+        .nice-button:hover {
+            background-color: white !important; /* White background on hover */
+            color: #808080 !important; /* Grey text color on hover */
+        
+        /* Style for the column of restaurant buttons */
+        .restaurant-buttons-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center the buttons horizontally */
+            margin-top: 20px; /* Adjust the top margin as needed */
+        
+        /* Style for the main container */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center all elements horizontally */
+            justify-content: center; /* Center all elements vertically */
+            padding: 20px; /* Padding around the main container */
+        }
+    </style>
+    ''')
+
     m()
     ui.run(native=True)
