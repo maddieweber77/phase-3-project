@@ -26,6 +26,7 @@ name_input_widget = None
 address_input_widget = None
 party_size_input_widget = None
 submit_button = None
+your_reservations_button = None
 
 bidding_input_widget = None
 bidding_amount_input_widget = None
@@ -36,6 +37,9 @@ start_over_button = None
 
 restaurant_buttons = []
 reservations = []
+bidding_amount_widgets = []
+submit_button_widgets = []
+
 
 ## Section: User Input Submission ###########################################
 
@@ -128,7 +132,7 @@ def create_start_over_button():
     start_over_button = ui.button('Start Over', on_click=lambda: start_over())
 
 def start_over():
-    global completion_counter, completion_counter_2, data, data_2, current_screen, available_restaurants_num, restaurant_buttons
+    global completion_counter, completion_counter_2, data, data_2, current_screen, available_restaurants_num, restaurant_buttons, bidding_amount_widgets, submit_button_widgets
 
     completion_counter = 0
     completion_counter_2 = 0
@@ -171,21 +175,27 @@ def handle_button_click(restaurant, bidding_system):
     prompt_bid(restaurant, bidding_system)
 
 def prompt_bid(restaurant, bidding_system):
-    global bidding_amount_input_widget, submit_button_2
+    global bidding_amount_input_widget, submit_button_2, bidding_amount_widgets, submit_button_widgets
     # Display a prompt for the user to enter a bid for the specific restaurant
     with ui.row():
         bidding_amount_input_widget = ui.input(f"Bid Amount for {restaurant.name} (must be $10 greater than last bid)")
+        bidding_amount_widgets.append(bidding_amount_input_widget)
     with ui.row():
         submit_button_2 = ui.button('Submit', on_click=lambda: submit_bid(restaurant, bidding_system))
+        submit_button_widgets.append(submit_button_2)
 
 def submit_bid(restaurant, bidding_system):
-    global data_2, completion_counter_2, bid_placed
+    global data_2, completion_counter_2, bid_placed, reservations
     bid_amount = bidding_amount_input_widget.value
 
     data_2['restaurant_name'] = restaurant.name
     data_2['bid_amount'] = bid_amount
 
     bidding_system.place_bid(data['user'], data_2['restaurant_name'], data_2['bid_amount'])
+
+    # Add the reservation to the global reservations list
+    reservation = {'name': data_2['restaurant_name'], 'bid_amount': data_2['bid_amount']}
+    reservations.append(reservation)
 
     bid_placed = True
 
@@ -228,9 +238,14 @@ def switch_to_screen(screen):
 #! hide all components 
 
 def hide_all_components():
-    global name_input_widget, address_input_widget, party_size_input_widget, submit_button, available_restaurants_label, submit_button_2, bidding_amount_input_widget
+    global name_input_widget, address_input_widget, party_size_input_widget, submit_button, available_restaurants_label, submit_button_2, bidding_amount_input_widget, bidding_amount_widgets, submit_button_widgets
 
     hide_start_over_button()
+
+    for widget in bidding_amount_widgets:
+        widget.visible = False
+    for widget in submit_button_widgets:
+        widget.visible = False
 
     # Hide all components from Screen 1
     name_input_widget.visible = False
@@ -331,7 +346,8 @@ def show_screen_4():
 
 def create_your_reservations_button():
     global your_reservations_button
-    your_reservations_button = ui.button('Your Reservations', on_click=lambda: switch_to_screen(SCREEN_4))
+    if your_reservations_button is None:
+        your_reservations_button = ui.button('Your Reservations', on_click=lambda: switch_to_screen(SCREEN_4))
 
 def submit_all(data):
     submit_name(data)
