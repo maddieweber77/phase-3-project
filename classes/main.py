@@ -219,8 +219,11 @@ def switch_to_screen(screen):
     global current_screen
     current_screen = screen
 
+
+#! hide all components 
+
 def hide_all_components():
-    global name_input_widget, address_input_widget, party_size_input_widget, submit_button, available_restaurants_label
+    global name_input_widget, address_input_widget, party_size_input_widget, submit_button, available_restaurants_label, submit_button_2, bidding_amount_input_widget
 
     hide_start_over_button()
 
@@ -229,6 +232,8 @@ def hide_all_components():
     address_input_widget.visible = False
     party_size_input_widget.visible = False
     submit_button.visible = False
+
+    #Hide all from screen 2
 
     if available_restaurants_label is None:
         available_restaurants_label = ui.html("")
@@ -241,6 +246,13 @@ def hide_all_components():
     if restaurant_buttons:
         for button in restaurant_buttons:
             button.visible = False
+    
+    #hide all from screen 3
+    if bidding_amount_input_widget is not None:
+        bidding_amount_input_widget.visible = False
+    
+    if submit_button_2 is not None:
+        submit_button_2.visible = False
 
 def show_screen_1():
     hide_all_components()
