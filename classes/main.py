@@ -35,6 +35,7 @@ available_restaurants_label = None
 start_over_button = None
 
 restaurant_buttons = []
+reservations = []
 
 ## Section: User Input Submission ###########################################
 
@@ -216,6 +217,7 @@ def m():
 SCREEN_1 = 1
 SCREEN_2 = 2
 SCREEN_3 = 3
+SCREEN_4 = 4
 current_screen = SCREEN_1
 
 def switch_to_screen(screen):
@@ -304,6 +306,33 @@ def show_screen_3(restaurant_name, bid_amount):
     
     show_start_over_button()
 
+def show_screen_4():
+    hide_all_components()
+    
+    # Display Screen 4 components
+    with ui.column():
+        # Header for Your Reservations
+        with ui.row():
+            ui.header('Your Reservations')
+
+        # Display reservations
+        with ui.row():
+            # Assuming you have a list of reservations, modify this part accordingly
+            reservations = [
+                {'name': 'Restaurant 1', 'time': '2024-01-01 18:00'},
+                {'name': 'Restaurant 2', 'time': '2024-01-02 19:30'},
+                # Add more reservations as needed
+            ]
+            for idx, reservation in enumerate(reservations, start=1):
+                ui.text(f"{idx}. {reservation['name']} - Time: {reservation['time']}")
+
+    # Include the Start Over button on Screen 4
+    show_start_over_button()
+
+def create_your_reservations_button():
+    global your_reservations_button
+    your_reservations_button = ui.button('Your Reservations', on_click=lambda: switch_to_screen(SCREEN_4))
+
 def submit_all(data):
     submit_name(data)
     submit_address(data)
@@ -334,6 +363,7 @@ def n():
     # Show Screen 1 initially
     show_screen_1()
     create_start_over_button()
+    create_your_reservations_button()
 
 if __name__ in {"__main__", "__mp_main__"}:
     m()
