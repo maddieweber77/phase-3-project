@@ -82,7 +82,7 @@ def check_completion():
     if completion_counter == 3:
         # Reset the completion counter for future runs
         completion_counter = 0
-        hide_components()
+        hide_components_initally()
         n()
 
 ## Section: Bidding System Operations ######################################
@@ -109,7 +109,7 @@ def hide_bidding_questions():
 
 ## Section: GUI Component Operations #######################################
 
-def hide_components():
+def hide_components_initally():
     global name_input_widget, address_input_widget, party_size_input_widget, submit_button
     # Hide the three prompts and the submit button
     name_input_widget.visible = False
@@ -125,18 +125,9 @@ def handle_button_click(restaurant, bidding_system):
     completion_counter_2+=1
     print('from handle button click, completion counter')
     print(completion_counter_2)
-    #! want this to be true initially, but once I click on a button, I want it to become false
-    set_buttons_visibility(True)
+    # set_buttons_visibility(True)
 
-    # Now handle the click event for the specific restaurant
     prompt_bid(restaurant, bidding_system)
-
-def set_buttons_visibility(visibility):
-    global completion_counter_2
-
-    for idx in range(completion_counter_2):
-        # Set the visibility of the button to the specified value
-        restaurant_buttons[idx].visible = visibility
 
 def prompt_bid(restaurant, bidding_system):
     global bidding_amount_input_widget, submit_button_2
@@ -227,8 +218,6 @@ def show_screen_2():
 
     hide_all_components()
     available_restaurants_num.visible = True
-    with ui.row():
-        reSearch_button = ui.button('Re-Search', on_click=lambda: re_search(bidding_system))
 
     #! change below to get_fancy_restaurants when pulling from the API
     available_restaurants = get_hardcoded_restaurants(data['latitude'], data['longitude'])
@@ -239,9 +228,6 @@ def show_screen_2():
             button = ui.button(f"{idx}. {restaurant.name} - Max Party Size: {restaurant.max_party_size} - Current Bid: ${restaurant.current_bid}", on_click=on_click_handler)
             restaurant_buttons.append(button)
 
-    # Call display_available_restaurants to show the buttons only if not on Screen 3
-    if current_screen != SCREEN_3:
-        display_available_restaurants(available_restaurants, party_size, bidding_system)
 
 def show_screen_3(restaurant_name, bid_amount):
     hide_all_components()
