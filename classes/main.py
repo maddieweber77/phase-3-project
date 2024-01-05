@@ -29,6 +29,7 @@ submit_button = None
 bidding_input_widget = None
 bidding_amount_input_widget = None
 submit_button_2 = None
+available_restaurants_num = None
 
 restaurant_buttons = []
 
@@ -116,6 +117,8 @@ def hide_components():
     party_size_input_widget.visible = False
     submit_button.visible = False
 
+    
+
 def handle_button_click(restaurant, bidding_system):
     global completion_counter_2
 
@@ -194,6 +197,9 @@ def hide_all_components():
     party_size_input_widget.visible = False
     submit_button.visible = False
 
+    if available_restaurants_num is not None:
+        available_restaurants_num.visible = False
+
     #! we need to check to see if the restaurant buttons exist, and if they do, then we need to make them hidden
     # Check and hide restaurant buttons if they exist
     global restaurant_buttons
@@ -209,15 +215,24 @@ def show_screen_1():
     submit_button.visible = True
 
 def show_screen_2():
+    global available_restaurants_num 
     hide_all_components()
-    # Display Screen 2 components
+
+    if available_restaurants_num is None:
+        available_restaurants_num = ui.html("")
+
+    party_size = data['party_size']
+    
+    available_restaurants_num.visible = True
+
+    hide_all_components()
+    available_restaurants_num.visible = True
     with ui.row():
         reSearch_button = ui.button('Re-Search', on_click=lambda: re_search(bidding_system))
 
-    party_size = data['party_size']
     #! change below to get_fancy_restaurants when pulling from the API
     available_restaurants = get_hardcoded_restaurants(data['latitude'], data['longitude'])
-    ui.html(f"<strong>Available Restaurants for Party Size {party_size}</strong>")
+    available_restaurants_num = ui.html(f"<strong>Available Restaurants for Party Size {party_size}</strong>")
     for idx, restaurant in enumerate(available_restaurants, start=1):
         on_click_handler = lambda restaurant=restaurant: handle_button_click(restaurant, bidding_system)
         with ui.row():
