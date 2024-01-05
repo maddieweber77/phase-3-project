@@ -265,8 +265,6 @@ def show_screen_2():
 
     #! change below to get_fancy_restaurants when pulling from the API
     available_restaurants = get_hardcoded_restaurants(data['latitude'], data['longitude'])
-    with ui.column():
-        available_restaurants_label = ui.html(f"<strong>Available Restaurants for Party Size {party_size}</strong>")
     for idx, restaurant in enumerate(available_restaurants, start=1):
         on_click_handler = lambda restaurant=restaurant: handle_button_click(restaurant, bidding_system)
         with ui.column():
