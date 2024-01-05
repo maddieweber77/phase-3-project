@@ -290,7 +290,7 @@ from geopy.geocoders import Nominatim
 from user import User
 from bidding_system import BiddingSystem
 from restaurant import Restaurant
-from current_location import get_fancy_restaurants
+from current_location import get_fancy_restaurants, get_hardcoded_restaurants
 import random
 from nicegui import ui
 from nicegui.events import ValueChangeEventArguments
@@ -381,7 +381,7 @@ def check_completion_2(bidding_system):
         hide_bidding_questions()
 
 def hide_bidding_questions():
-    global bidding_input_widget, bidding_amount_input_widget, submit_button_2, restaurant_buttons
+    global bidding_input_widget, bidding_amount_input_widget, submit_button_2
     if bidding_input_widget:
         bidding_input_widget.visible = False
     if bidding_amount_input_widget:
@@ -389,8 +389,9 @@ def hide_bidding_questions():
     if submit_button_2:
         submit_button_2.visible = False
 
-    # Clear the list of restaurant buttons
-    restaurant_buttons = []
+    # Clear the existing restaurant buttons without re-initializing the list
+    for button in restaurant_buttons:
+        button.visible = True
 
 ## Section: GUI Component Operations #######################################
 
@@ -527,13 +528,17 @@ def show_screen_2():
         reSearch_button = ui.button('Re-Search', on_click=lambda: re_search(bidding_system))
 
     party_size = data['party_size']
-    available_restaurants = get_fancy_restaurants(data['latitude'], data['longitude'])
+    #! change below to get_fancy_restaurants when pulling from the API
+    available_restaurants = get_hardcoded_restaurants(data['latitude'], data['longitude'])
 
     for idx, restaurant in enumerate(available_restaurants, start=1):
         on_click_handler = lambda restaurant=restaurant: handle_button_click(restaurant, bidding_system)
         with ui.row():
             button = ui.button(f"{idx}. {restaurant.name} - Max Party Size: {restaurant.max_party_size} - Current Bid: ${restaurant.current_bid}", on_click=on_click_handler)
             restaurant_buttons.append(button)
+
+    # Call display_available_restaurants to show the buttons
+    display_available_restaurants(available_restaurants, party_size, bidding_system)
 
 def show_screen_3(restaurant_name, bid_amount):
     hide_all_components()
@@ -562,12 +567,13 @@ def n():
     print("Party Size:", data['party_size'])
 
     # Instantiate the bidding system with the list of restaurants
-    fancy_restaurants = get_fancy_restaurants(data['latitude'], data['longitude'])
+    #! change below to get_fancy_restaurants when pulling from the API
+    fancy_restaurants = get_hardcoded_restaurants(data['latitude'], data['longitude'])
     bidding_system = BiddingSystem(restaurants=fancy_restaurants)
 
     # Adding button to re-search if you want
     with ui.row():
-        reSearch_button = ui.button('Re-Search', on_click=lambda: re_search(bidding_system))
+        reSearch_button = ui.button('Re-Search', on_click=lambda: show_screen_1())
 
     # Hide the "Re-Search" button (if it exists)
     if reSearch_button:

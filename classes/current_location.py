@@ -4,6 +4,22 @@ import requests
 from restaurant import Restaurant
 import random
 
+def get_hardcoded_restaurants(lat, lng):
+    # Hardcoded list of 10 restaurants
+    return [
+        Restaurant(name="Restaurant A", max_party_size=random.randint(2, 10)),
+        Restaurant(name="Restaurant B", max_party_size=random.randint(2, 10)),
+        Restaurant(name="Restaurant C", max_party_size=random.randint(2, 10)),
+        Restaurant(name="Restaurant D", max_party_size=random.randint(2, 10)),
+        Restaurant(name="Restaurant E", max_party_size=random.randint(2, 10)),
+        Restaurant(name="Restaurant F", max_party_size=random.randint(2, 10)),
+        Restaurant(name="Restaurant G", max_party_size=random.randint(2, 10)),
+        Restaurant(name="Restaurant H", max_party_size=random.randint(2, 10)),
+        Restaurant(name="Restaurant I", max_party_size=random.randint(2, 10)),
+        Restaurant(name="Restaurant J", max_party_size=random.randint(2, 10)),
+    ]
+
+
 def get_fancy_restaurants(lat, lng):
     url = "https://maps-data.p.rapidapi.com/searchmaps.php"
 
@@ -40,33 +56,51 @@ def get_fancy_restaurants(lat, lng):
         return []
 
 def fetch_reservations_from_db():
-    conn = sqlite3.connect('reservations.db')
-    cursor = conn.cursor()
+    # conn = sqlite3.connect('reservations.db')
+    # cursor = conn.cursor()
 
-    # Fetch all data from the reservations table
-    cursor.execute('SELECT * FROM reservations')
-    reservations = cursor.fetchall()
+    # # Fetch all data from the reservations table
+    # cursor.execute('SELECT * FROM reservations')
+    # reservations = cursor.fetchall()
 
-    conn.close()
+    # conn.close()
 
-    return reservations
+    # return reservations
+     pass
 
 def main(latitude, longitude):
 
-        # Get fancy restaurants
-        response = get_fancy_restaurants(latitude, longitude)
+    #     # Get fancy restaurants
+    #     response = get_fancy_restaurants(latitude, longitude)
 
-        # Fetch reservations from the database
-        reservations = fetch_reservations_from_db()
+    #     # Fetch reservations from the database
+    #     reservations = fetch_reservations_from_db()
 
-        # Check if the API request was successful
-        if response.get('status') == 'OK':
-            restaurants = response.get('data', {}).get('places', [])
+    #     # Check if the API request was successful
+    #     if response.get('status') == 'OK':
+    #         restaurants = response.get('data', {}).get('places', [])
             
-        else:
-            print(f"Error: {response.get('message', 'Unknown error')}")
-    # else:
-    #     print("Invalid address. Please try again.")
+    #     else:
+    #         print(f"Error: {response.get('message', 'Unknown error')}")
+    # # else:
+    # #     print("Invalid address. Please try again.")
+
+    # Fetch hardcoded restaurants
+    restaurants = get_hardcoded_restaurants()
+
+    # Fetch reservations from the database
+    reservations = fetch_reservations_from_db()
+
+    # Use the 'restaurants' list for further processing
+    print("Hardcoded Restaurants:")
+    for restaurant in restaurants:
+        print(f"{restaurant.name} - Max Party Size: {restaurant.max_party_size}")
+
+if __name__ == "__main__":
+    # Sample latitude and longitude (replace with actual values)
+    main(latitude=40.7128, longitude=-74.0060)
+
+
 
 if __name__ == "__main__":
     main()
