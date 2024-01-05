@@ -133,6 +133,11 @@ def start_over():
     data_2 = {'restaurant_name': None, 'bid_amount': None}
     current_screen = SCREEN_1
     available_restaurants_num = None
+
+    # Clear the existing restaurant buttons without re-initializing the list
+    for button in restaurant_buttons:
+        button.visible = False
+    
     restaurant_buttons = []
 
     hide_all_components()
