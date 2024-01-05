@@ -30,6 +30,7 @@ bidding_input_widget = None
 bidding_amount_input_widget = None
 submit_button_2 = None
 available_restaurants_num = None
+start_over_button = None
 
 restaurant_buttons = []
 
@@ -108,9 +109,41 @@ def hide_bidding_questions():
         button.visible = True
 
 ## Section: GUI Component Operations #######################################
+        
+def hide_start_over_button():
+    global start_over_button
+    if start_over_button:
+        start_over_button.visible = False
+
+def show_start_over_button():
+    global start_over_button
+    if start_over_button:
+        start_over_button.visible = True
+
+def create_start_over_button():
+    global start_over_button
+    start_over_button = ui.button('Start Over', on_click=lambda: start_over())
+
+def start_over():
+    global completion_counter, completion_counter_2, data, data_2, current_screen, available_restaurants_num, restaurant_buttons
+
+    completion_counter = 0
+    completion_counter_2 = 0
+    data = {'user': None, 'latitude': None, 'longitude': None, 'party_size': None}
+    data_2 = {'restaurant_name': None, 'bid_amount': None}
+    current_screen = SCREEN_1
+    available_restaurants_num = None
+    restaurant_buttons = []
+
+    hide_all_components()
+    hide_start_over_button()
+    show_screen_1()
 
 def hide_components_initally():
     global name_input_widget, address_input_widget, party_size_input_widget, submit_button
+
+    hide_start_over_button()
+
     # Hide the three prompts and the submit button
     name_input_widget.visible = False
     address_input_widget.visible = False
@@ -182,6 +215,9 @@ def switch_to_screen(screen):
 
 def hide_all_components():
     global name_input_widget, address_input_widget, party_size_input_widget, submit_button
+
+    hide_start_over_button()
+
     # Hide all components from Screen 1
     name_input_widget.visible = False
     address_input_widget.visible = False
@@ -200,6 +236,7 @@ def hide_all_components():
 
 def show_screen_1():
     hide_all_components()
+    hide_start_over_button()
     name_input_widget.visible = True
     address_input_widget.visible = True
     party_size_input_widget.visible = True
@@ -219,12 +256,15 @@ def show_screen_2():
     hide_all_components()
     available_restaurants_num.visible = True
 
+    show_start_over_button()
+
     #! change below to get_fancy_restaurants when pulling from the API
     available_restaurants = get_hardcoded_restaurants(data['latitude'], data['longitude'])
-    available_restaurants_num = ui.html(f"<strong>Available Restaurants for Party Size {party_size}</strong>")
+    with ui.column():
+        available_restaurants_num = ui.html(f"<strong>Available Restaurants for Party Size {party_size}</strong>")
     for idx, restaurant in enumerate(available_restaurants, start=1):
         on_click_handler = lambda restaurant=restaurant: handle_button_click(restaurant, bidding_system)
-        with ui.row():
+        with ui.column():
             button = ui.button(f"{idx}. {restaurant.name} - Max Party Size: {restaurant.max_party_size} - Current Bid: ${restaurant.current_bid}", on_click=on_click_handler)
             restaurant_buttons.append(button)
 
@@ -234,6 +274,8 @@ def show_screen_3(restaurant_name, bid_amount):
     # Display Screen 3 components
     with ui.row():
         ui.html(f'<strong>Bid placed successfully for {restaurant_name} for ${bid_amount}.</strong>')
+    
+    show_start_over_button()
 
 def submit_all(data):
     submit_name(data)
@@ -242,6 +284,7 @@ def submit_all(data):
 
     # Switch to Screen 2 after submitting Screen 1
     switch_to_screen(SCREEN_2)
+    show_start_over_button()
 
     # Display Screen 2
     show_screen_2()
@@ -260,16 +303,10 @@ def n():
     fancy_restaurants = get_hardcoded_restaurants(data['latitude'], data['longitude'])
     bidding_system = BiddingSystem(restaurants=fancy_restaurants)
 
-    # Adding button to re-search if you want
-    with ui.row():
-        reSearch_button = ui.button('Re-Search', on_click=lambda: show_screen_1())
-
-    # Hide the "Re-Search" button (if it exists)
-    if reSearch_button:
-        reSearch_button.visible = False
 
     # Show Screen 1 initially
     show_screen_1()
+    create_start_over_button()
 
 if __name__ in {"__main__", "__mp_main__"}:
     m()
