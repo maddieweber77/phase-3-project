@@ -178,7 +178,7 @@ def prompt_bid(restaurant, bidding_system):
     global bidding_amount_input_widget, submit_button_2, bidding_amount_widgets, submit_button_widgets
     # Display a prompt for the user to enter a bid for the specific restaurant
     with ui.row():
-        bidding_amount_input_widget = ui.input(f"Bid Amount for {restaurant.name} (must be $10 greater than last bid)")
+        bidding_amount_input_widget = ui.input(f"Bid Amount:")
         bidding_amount_widgets.append(bidding_amount_input_widget)
     with ui.row():
         submit_button_2 = ui.button('Submit', on_click=lambda: submit_bid(restaurant, bidding_system)).classes('nice-button')
@@ -186,6 +186,7 @@ def prompt_bid(restaurant, bidding_system):
 
 def submit_bid(restaurant, bidding_system):
     global data_2, completion_counter_2, bid_placed, reservations
+    
     bid_amount = bidding_amount_input_widget.value
 
     data_2['restaurant_name'] = restaurant.name
@@ -254,9 +255,6 @@ def hide_all_components():
     submit_button.visible = False
 
     #Hide all from screen 2
-
-    # if available_restaurants_label is None:
-    #     available_restaurants_label = ui.html("")
 
     if available_restaurants_label is not None:
         available_restaurants_label.visible = False
@@ -350,7 +348,27 @@ def create_your_reservations_button():
     if your_reservations_button is None:
         your_reservations_button = ui.button('Your Reservations', on_click=lambda: switch_to_screen(SCREEN_4)).classes('nice-button')
 
+#! might be one of the functions below
 def submit_all(data):
+    # Get the values from the input widgets
+    name_input = name_input_widget.value
+    address_input = address_input_widget.value
+    party_size_input = party_size_input_widget.value
+
+    
+    # Validate the "Number of People in Party" input
+    try:
+        party_size = int(party_size_input)
+    except ValueError:
+        ui.notify("Please enter a valid number for the 'Number of People in Party'.")
+        return  # Don't proceed if the input is not a valid number
+
+    # Check if any of the required inputs is empty
+    if not name_input or not address_input or not party_size_input:
+        ui.notify("Please fill out all the prompts before proceeding.")
+        return  # Don't proceed if any input is empty
+    
+    data['party_size'] = party_size
     submit_name(data)
     submit_address(data)
     submit_party_size(data)
@@ -390,7 +408,6 @@ if __name__ in {"__main__", "__mp_main__"}:
             background-color: #808080 !important; /* Grey background color */
             color: white; /* White text color */
             border: 2px solid #808080; /* Grey border */
-            padding: 10px 20px; /* Padding around text */
             text-align: center; /* Center text */
             text-decoration: none; /* Remove underline */
             display: inline-block; /* Make it inline block */
@@ -421,7 +438,7 @@ if __name__ in {"__main__", "__mp_main__"}:
             flex-direction: column;
             align-items: center; /* Center all elements horizontally */
             justify-content: center; /* Center all elements vertically */
-            padding: 20px; /* Padding around the main container */
+            
         }
     </style>
     ''')
