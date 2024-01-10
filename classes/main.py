@@ -167,6 +167,9 @@ def hide_components_initally():
 def handle_button_click(restaurant, bidding_system):
     global completion_counter_2
 
+    # Hide previous bid-related components
+    hide_bidding_components()
+
     completion_counter_2+=1
     print('from handle button click, completion counter')
     print(completion_counter_2)
@@ -301,6 +304,14 @@ def hide_all_components():
     if bid_placed:
         with ui.row():
             ui.html("")  # This is an empty html element to clear the bid success message
+
+def hide_bidding_components():
+    global bidding_amount_input_widget, submit_button_2, bidding_amount_widgets, submit_button_widgets
+
+    for widget in bidding_amount_widgets:
+        widget.visible = False
+    for widget in submit_button_widgets:
+        widget.visible = False
 
 
 def show_screen_1():
