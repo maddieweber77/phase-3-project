@@ -177,8 +177,11 @@ def handle_button_click(restaurant, bidding_system):
 def prompt_bid(restaurant, bidding_system):
     global bidding_amount_input_widget, submit_button_2, bidding_amount_widgets, submit_button_widgets
     # Display a prompt for the user to enter a bid for the specific restaurant
+
+    default_bid_amount = 10 * int(data['party_size'])+restaurant.current_bid
+
     with ui.row():
-        bidding_amount_input_widget = ui.input(f"Bid Amount:")
+        bidding_amount_input_widget = ui.input(f"Bid Amount:", placeholder=f"Minimum: ${default_bid_amount}")
         bidding_amount_widgets.append(bidding_amount_input_widget)
     with ui.row():
         submit_button_2 = ui.button('Submit', on_click=lambda: submit_bid(restaurant, bidding_system)).classes('nice-button')
