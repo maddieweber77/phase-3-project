@@ -27,6 +27,7 @@ address_input_widget = None
 party_size_input_widget = None
 submit_button = None
 your_reservations_button = None
+reservations_display = None
 
 bidding_input_widget = None
 bidding_amount_input_widget = None
@@ -36,6 +37,7 @@ available_restaurants_label = None
 start_over_button = None
 
 restaurant_buttons = []
+reservation_buttons = []
 reservations = []
 bidding_amount_widgets = []
 submit_button_widgets = []
@@ -132,7 +134,7 @@ def create_start_over_button():
     start_over_button = ui.button('Start Over', on_click=lambda: start_over()).classes('nice-button')
 
 def start_over():
-    global completion_counter, completion_counter_2, data, data_2, current_screen, available_restaurants_num, restaurant_buttons, bidding_amount_widgets, submit_button_widgets
+    global completion_counter, completion_counter_2, data, data_2, current_screen, available_restaurants_num, restaurant_buttons, bidding_amount_widgets, submit_button_widgets, reservation_buttons
 
     completion_counter = 0
     completion_counter_2 = 0
@@ -144,8 +146,11 @@ def start_over():
     # Clear the existing restaurant buttons without re-initializing the list
     for button in restaurant_buttons:
         button.visible = False
+    for button in reservation_buttons:
+        button.visible = False
     
     restaurant_buttons = []
+    reservation_buttons = []
 
     hide_all_components()
     hide_start_over_button()
@@ -222,6 +227,7 @@ def submit_bid(restaurant, bidding_system):
     # Add the reservation to the global reservations list
     reservation = {'name': data_2['restaurant_name'], 'bid_amount': data_2['bid_amount']}
     reservations.append(reservation)
+    print("Reservations after appending:", reservations)
 
     bid_placed = True
 
@@ -264,7 +270,7 @@ def switch_to_screen(screen):
 #! hide all components 
 
 def hide_all_components():
-    global name_input_widget, address_input_widget, party_size_input_widget, submit_button, available_restaurants_label, submit_button_2, bidding_amount_input_widget, bidding_amount_widgets, submit_button_widgets
+    global name_input_widget, address_input_widget, party_size_input_widget, submit_button, available_restaurants_label, submit_button_2, bidding_amount_input_widget, bidding_amount_widgets, submit_button_widgets, reservations_display
 
     hide_start_over_button()
 
@@ -304,6 +310,12 @@ def hide_all_components():
     if bid_placed:
         with ui.row():
             ui.html("")  # This is an empty html element to clear the bid success message
+    
+    # Hide reservations display if not on Screen 4 or the Your Reservations button is not clicked
+    if current_screen != SCREEN_4 or not your_reservations_button.is_clicked():
+        if reservations_display is not None:
+            reservations_display.visible = False
+
 
 def hide_bidding_components():
     global bidding_amount_input_widget, submit_button_2, bidding_amount_widgets, submit_button_widgets
@@ -312,6 +324,12 @@ def hide_bidding_components():
         widget.visible = False
     for widget in submit_button_widgets:
         widget.visible = False
+
+def clear_reservation_buttons():
+    global reservation_buttons
+    for button in reservation_buttons:
+        button.visible = False
+    reservation_buttons = []
 
 
 def show_screen_1():
@@ -354,24 +372,23 @@ def show_screen_3(restaurant_name, bid_amount):
     show_screen_4()
 
 def show_screen_4():
+    global reservations_display
     hide_all_components()
     
     # Display Screen 4 components
     with ui.column():
         # Header for Your Reservations
         with ui.row():
-            ui.html('<strong>Your Reservations</strong>')
+             reservations_display = ui.html('<strong>Your Reservations</strong>')
 
-        # Display reservations
+        # Display reservations dynamically
         with ui.row():
-            # Assuming you have a list of reservations, modify this part accordingly
-            reservations = [
-                {'name': 'Restaurant 1', 'time': '2024-01-01 18:00'},
-                {'name': 'Restaurant 2', 'time': '2024-01-02 19:30'},
-                # Add more reservations as needed
-            ]
+            clear_reservation_buttons()  # Clear existing reservation buttons
+
             for idx, reservation in enumerate(reservations, start=1):
-                ui.label(f"{idx}. {reservation['name']} - Time: {reservation['time']}")
+                #! need to add # of people
+                res_button = ui.button(f"{idx}. {reservation['name']} - Bid Amount: ${reservation['bid_amount']}")
+                reservation_buttons.append(res_button)
 
     # Include the Start Over button on Screen 4
     show_start_over_button()
@@ -388,6 +405,10 @@ def submit_all(data):
     address_input = address_input_widget.value
     party_size_input = party_size_input_widget.value
 
+    # Check if any of the required inputs is empty
+    if not name_input or not address_input or not party_size_input:
+        ui.notify("Please fill out all the prompts before proceeding.")
+        return  # Don't proceed if any input is empty
     
     # Validate the "Number of People in Party" input
     try:
@@ -395,11 +416,6 @@ def submit_all(data):
     except ValueError:
         ui.notify("Please enter a valid number for the 'Number of People in Party'.")
         return  # Don't proceed if the input is not a valid number
-
-    # Check if any of the required inputs is empty
-    if not name_input or not address_input or not party_size_input:
-        ui.notify("Please fill out all the prompts before proceeding.")
-        return  # Don't proceed if any input is empty
     
     data['party_size'] = party_size
     submit_name(data)
