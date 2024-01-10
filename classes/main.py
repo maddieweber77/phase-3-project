@@ -186,8 +186,15 @@ def prompt_bid(restaurant, bidding_system):
 
 def submit_bid(restaurant, bidding_system):
     global data_2, completion_counter_2, bid_placed, reservations
-    
+
     bid_amount = bidding_amount_input_widget.value
+
+    #! this is where we need to check bid amount
+    try:
+        bid_amount = float(bid_amount)
+    except ValueError:
+        ui.notify("Please enter a valid numeric bid amount.")
+        return  # Don't proceed if the input is not a valid number
 
     data_2['restaurant_name'] = restaurant.name
     data_2['bid_amount'] = bid_amount
