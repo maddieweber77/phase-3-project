@@ -195,6 +195,18 @@ def submit_bid(restaurant, bidding_system):
     except ValueError:
         ui.notify("Please enter a valid numeric bid amount.")
         return  # Don't proceed if the input is not a valid number
+    
+    # Convert party_size to an integer
+    try:
+        party_size = int(data['party_size'])
+    except ValueError:
+        ui.notify("Invalid party size. Please enter a valid number.")
+        return  # Don't proceed if party_size is not a valid number
+
+    # Check if the bid amount meets the criteria
+    if bid_amount < restaurant.current_bid + 10 * party_size:
+        ui.notify("Bid amount must be at least $10 more per person than the current bid.")
+        return  # Don't proceed if the bid amount is too low
 
     data_2['restaurant_name'] = restaurant.name
     data_2['bid_amount'] = bid_amount
